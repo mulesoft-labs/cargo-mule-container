@@ -1,0 +1,1 @@
+This project is a Cargo container implementation for Mule. It provides abstration to deploy Mule applications to embedded and installed servers.

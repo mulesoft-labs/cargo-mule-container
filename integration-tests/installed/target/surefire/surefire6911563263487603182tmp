@@ -1,0 +1,5 @@
+#surefire
+#Mon Apr 18 23:55:09 PDT 2011
+user.dir=/Users/julien/Documents/Projects/cargo-mule/integration-tests/installed
+localRepository=/Users/julien/.m2/repository
+basedir=/Users/julien/Documents/Projects/cargo-mule/integration-tests/installed

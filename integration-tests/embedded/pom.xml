@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.mule.tools.cargo.integration-tests</groupId>
+    <artifactId>embedded</artifactId>
+
+    <parent>
+        <groupId>org.mule.tools.cargo</groupId>
+        <artifactId>integration-tests</artifactId>
+        <version>0.9.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.mule.tools.cargo</groupId>
+            <artifactId>container</artifactId>
+            <version>0.9.0-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.examples</groupId>
+            <artifactId>mule-example-echo</artifactId>
+            <version>3.1.1</version>
+            <type>zip</type>
+        </dependency>
+    </dependencies>
+
+    <name>Embedded container integration test</name>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.cargo</groupId>
+                <artifactId>cargo-maven2-plugin</artifactId>
+                <version>${cargo.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.mule.tools.cargo</groupId>
+                        <artifactId>container</artifactId>
+                        <version>0.9.0-SNAPSHOT</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.mule.modules</groupId>
+                        <artifactId>mule-module-cxf</artifactId>
+                        <version>3.1.1</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <wait>false</wait>
+                    <container>
+                        <containerId>mule3x</containerId>
+                        <implementation>org.mule.tools.cargo.container.Mule3xEmbeddedLocalContainer</implementation>
+                        <type>embedded</type>
+                    </container>
+                    <configuration>
+                        <implementation>org.mule.tools.cargo.container.configuration.Mule3xLocalConfiguration</implementation>
+                        <type>standalone</type>
+  				     <deployables>
+  				         <deployable>
+  				             <implementation>org.mule.tools.cargo.deployable.MuleApplicationDeployable</implementation>
+  				             <groupId>org.mule.examples</groupId>
+  				             <artifactId>mule-example-echo</artifactId>
+  				             <type>zip</type>
+  				         </deployable>
+  				     </deployables>
+                    </configuration>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>start-container</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>start</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>stop-container</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.8.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
