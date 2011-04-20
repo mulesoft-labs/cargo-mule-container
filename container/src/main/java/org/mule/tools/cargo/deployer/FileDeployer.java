@@ -16,6 +16,11 @@ import org.codehaus.cargo.container.spi.deployer.AbstractInstalledLocalDeployer;
 public class FileDeployer extends AbstractInstalledLocalDeployer {
 
     private static final String ANCHOR_SUFFIX = "-anchor.txt";
+    private static final long SLEEP_INTERVAL = 500L;
+    private long maxFileWaitTime = FileDeployer.DEFAULT_MAX_FILE_WAIT_TIME;
+    private static final long DEFAULT_MAX_FILE_WAIT_TIME = 60000L;
+    private static final String LOG_DEPLOY_CATEGORY = "deploy";
+    private static final String LOG_UNDEPLOY_CATEGORY = "undeploy";
 
     public FileDeployer(final InstalledLocalContainer container) {
         super(container);
@@ -36,8 +41,27 @@ public class FileDeployer extends AbstractInstalledLocalDeployer {
         return (InstalledLocalContainer) super.getContainer();
     }
 
+    /**
+     * @return mule apps folder
+     */
     protected final File getAppsFolder() {
         return new File(getContainer().getHome()+"/apps");
+    }
+
+    /**
+     * @param deployable
+     * @return anchor file for specified {@link Deployable}
+     */
+    protected final File getAnchorFile(final Deployable deployable) {
+        return new File(getAppsFolder(), extractName(deployable)+FileDeployer.ANCHOR_SUFFIX);
+    }
+
+    /**
+     * @param deployable
+     * @return application folder for specified {@link Deployable}
+     */
+    protected final File getApplicationFolder(final Deployable deployable) {
+        return new File(getAppsFolder(), extractName(deployable));
     }
 
     /**
@@ -49,6 +73,30 @@ public class FileDeployer extends AbstractInstalledLocalDeployer {
         return fileName.substring(fileName.lastIndexOf('/')+1, fileName.length()-4);
     }
 
+    /**
+     * Wait up to timeout before anchor is discovered (using {@link File#exists()}).
+     * @param file
+     * @param timeout
+     * @param exist if file should exist or not
+     * @throws DeployableException if timeout is elapsed before anchor is discovered
+     */
+    protected final void waitForFile(final File file, final long timeout, final boolean exist) throws DeployableException {
+        final long before = System.currentTimeMillis();
+        while (System.currentTimeMillis() - before < timeout) {
+            if (file.exists() == exist) {
+                return;
+            }
+
+            try {
+                Thread.sleep(FileDeployer.SLEEP_INTERVAL);
+            } catch (InterruptedException e) {
+                //Quit loop when interrupted
+                break;
+            }
+        }
+        throw new DeployableException("Waited on <"+file+"> for <"+timeout+"> ms");
+    }
+
     @Override
     public void deploy(final Deployable deployable) {
         ensureMuleApplication(deployable);
@@ -57,14 +105,22 @@ public class FileDeployer extends AbstractInstalledLocalDeployer {
         final File sourceFile = new File(deployable.getFile());
         final File destinationFile = new File(appsFolder, sourceFile.getName());
 
-        //TODO Need a way to know app is fully deployed.
-        getLogger().info("Deploying <"+extractName(deployable)+">", "deploy");
-        getLogger().info("Copying <"+sourceFile+"> to <"+destinationFile+">", "deploy");
+        final String applicationName = extractName(deployable);
+        getLogger().info("Deploying <"+applicationName+">", "deploy");
+        getLogger().info("Copying <"+sourceFile+"> to <"+destinationFile+">", FileDeployer.LOG_DEPLOY_CATEGORY);
 
         try {
             FileUtils.getFileUtils().copyFile(sourceFile, destinationFile);
+
+            final File anchorFile = getAnchorFile(deployable);
+
+            getLogger().info("Waiting for <"+anchorFile+"> creation", FileDeployer.LOG_DEPLOY_CATEGORY);
+
+            final long before = System.currentTimeMillis();
+            waitForFile(anchorFile, this.maxFileWaitTime, true);
+            getLogger().info("Deployed <"+applicationName+"> in <"+(System.currentTimeMillis()-before)+"> ms", FileDeployer.LOG_DEPLOY_CATEGORY);
         } catch (IOException e) {
-            getLogger().warn("Failed to copy application to <"+appsFolder+">", "deploy");
+            getLogger().warn("Failed to copy application to <"+appsFolder+">: "+e.toString(), FileDeployer.LOG_DEPLOY_CATEGORY);
         }
     }
 
@@ -72,16 +128,27 @@ public class FileDeployer extends AbstractInstalledLocalDeployer {
     public void undeploy(final Deployable deployable) {
         ensureMuleApplication(deployable);
 
-        getLogger().info("Undeploying "+extractName(deployable), "undeploy");
+        final String applicationName = extractName(deployable);
 
-        final File appsFolder = getAppsFolder();
-        final File anchor = new File(appsFolder, extractName(deployable)+FileDeployer.ANCHOR_SUFFIX);
+        getLogger().info("Undeploying <"+applicationName+">", FileDeployer.LOG_UNDEPLOY_CATEGORY);
+
+        final File anchor = getAnchorFile(deployable);
         if (anchor.exists()) {
-            getLogger().info("Deleting <"+anchor+">", "undeploy");
+            getLogger().info("Deleting <"+anchor+">", FileDeployer.LOG_UNDEPLOY_CATEGORY);
 
-            anchor.delete();
+            if (!anchor.delete()) {
+                throw new DeployableException("Failed to delete <"+anchor+">");
+            }
+
+            final File applicationFolder = getApplicationFolder(deployable);
+
+            getLogger().info("Waiting for <"+applicationFolder+"> deletion", FileDeployer.LOG_UNDEPLOY_CATEGORY);
+
+            final long before = System.currentTimeMillis();
+            waitForFile(applicationFolder, this.maxFileWaitTime, false);
+            getLogger().info("Undeployed <"+applicationName+"> in <"+(System.currentTimeMillis()-before)+"> ms", FileDeployer.LOG_UNDEPLOY_CATEGORY);
         } else {
-            getLogger().info("No <"+anchor+"> to delete; skipping undeployment", "undeploy");
+            getLogger().info("No <"+anchor+"> to delete; skipping undeployment", FileDeployer.LOG_UNDEPLOY_CATEGORY);
         }
     }
 

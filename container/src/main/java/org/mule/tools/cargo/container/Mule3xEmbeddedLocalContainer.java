@@ -20,7 +20,7 @@ import org.mule.MuleServer;
 public class Mule3xEmbeddedLocalContainer extends AbstractEmbeddedLocalContainer {
 
     public static final String ID = "mule3x";
-    public static final String NAME = "Mule 3.x Local";
+    public static final String NAME = "Mule 3.x Embedded";
     private MuleServer server;
 
     public Mule3xEmbeddedLocalContainer(final LocalConfiguration configuration) {

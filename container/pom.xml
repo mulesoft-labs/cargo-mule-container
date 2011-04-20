@@ -22,12 +22,12 @@
         <dependency>
             <groupId>org.mule</groupId>
             <artifactId>mule-core</artifactId>
-            <version>3.1.1</version>
+            <version>${mule.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mule.modules</groupId>
             <artifactId>mule-module-launcher</artifactId>
-            <version>3.1.1</version>
+            <version>${mule.version}</version>
         </dependency>
     </dependencies>
 

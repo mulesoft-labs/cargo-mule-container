@@ -1,6 +1,7 @@
 package org.mule.tools.cargo.container;
 
 import java.io.File;
+import java.net.URLClassLoader;
 import java.security.Permission;
 
 import org.apache.tools.ant.taskdefs.Java;
@@ -20,7 +21,7 @@ import org.mule.module.reboot.MuleContainerSystemClassLoader;
 public class Mule3xInstalledLocalContainer extends AbstractInstalledLocalContainer {
 
     public static final String ID = "mule3x";
-    public static final String NAME = "Mule 3.x Local";
+    public static final String NAME = "Mule 3.x Installed";
     private static final String MULE_HOME = "mule.home";
     private static final String MULE_BASE = "mule.base";
     private MuleContainer container;
@@ -44,10 +45,12 @@ public class Mule3xInstalledLocalContainer extends AbstractInstalledLocalContain
         return new MuleContainerCapability();
     }
 
-    protected ClassLoader createContainerSystemClassLoader() throws Exception {
+    protected URLClassLoader createContainerSystemClassLoader() throws Exception {
         final File muleHome = MuleContainerBootstrap.lookupMuleHome();
         final File muleBase = MuleContainerBootstrap.lookupMuleBase();
         final DefaultMuleClassPathConfig config = new DefaultMuleClassPathConfig(muleHome, muleBase);
+        config.addFile(new File(getHome()+"/conf/"));
+        config.addFile(new File(getHome()+"/conf/log4j.properties"));
         return new MuleContainerSystemClassLoader(config);
     }
 

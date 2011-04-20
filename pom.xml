@@ -17,6 +17,7 @@
 
     <properties>
         <cargo.version>1.0.6</cargo.version>
+        <mule.version>3.1.1</mule.version>
     </properties>
 
     <developers>
