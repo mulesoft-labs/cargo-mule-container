@@ -18,6 +18,8 @@
     <properties>
         <cargo.version>1.0.6</cargo.version>
         <mule.version>3.1.1</mule.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <gh-pages-dir>/Users/julien/Documents/Projects/cargo-mule-container-gh-pages</gh-pages-dir>
     </properties>
 
     <developers>
