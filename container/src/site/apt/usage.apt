@@ -1,0 +1,165 @@
+Configuration
+
+* Mule Application Unit deployable
+
+ Cargo deployable metaphor is implemented as org.mule.tools.cargo.deployable.MuleApplicationDeployable. This implementation which encapsulates Mule application is usable with all container types.
+
+* Mule 3x Container
+
+ This plugin provides 2 different implementations of Cargo container based on {{{standalone processing unit container}http://www.gigaspaces.com/wiki/display/OLH/Open+Spaces+Standalone+Processing+Unit+Container}}.
+
+** Embedded Container
+
+ Allows to start a MuleServer using classpath from provided dependencies.
+ This container implementation supports a single deployable and no deployer implementation can be used.
+
+ When using this container you will need to provide:
+
+    * mule dependencies dependency definition
+
+    * your application dependencies
+
+ This container is implemented by org.mule.tools.cargo.container.Mule3xEmbeddedLocalContainer class and must be used with associated:
+
+    * local configuration (org.mule.tools.cargo.container.configuration.Mule3xLocalConfiguration)
+
+    * deployable type (org.mule.tools.cargo.deployable.MuleApplicationDeployable)
+
++--
+...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.cargo</groupId>
+        <artifactId>cargo-maven2-plugin</artifactId>
+        <version>${cargo.version}</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.mule.tools.cargo</groupId>
+            <artifactId>container</artifactId>
+            <version>${version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.mule.modules</groupId>
+            <artifactId>mule-module-cxf</artifactId>
+            <version>${mule.version}</version>
+          </dependency>
+        </dependencies>
+        <configuration>
+          <wait>false</wait>
+          <container>
+            <containerId>mule3x</containerId>
+            <implementation>org.mule.tools.cargo.container.Mule3xEmbeddedLocalContainer</implementation>
+            <type>embedded</type>
+          </container>
+          <configuration>
+            <implementation>org.mule.tools.cargo.container.configuration.Mule3xLocalConfiguration</implementation>
+            <deployables>
+              <deployable>
+                <implementation>org.mule.tools.cargo.deployable.MuleApplicationDeployable</implementation>
+                <groupId>org.mule.examples</groupId>
+                <artifactId>mule-example-echo</artifactId>
+                <type>zip</type>
+              </deployable>
+            </deployables>
+          </configuration>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  ...
++--
+
+** Installed Container
+
+ Allows to start a container using a local Mule installation.
+ This container implementation does not support deployable and file deployer implementation can be used.
+
+ When using this container you will need to provide:
+
+    * a valid Mule home location
+
+ This container is implemented by org.mule.tools.cargo.container.Mule3xInstalledLocalContainer class and must be used with associated:
+
+    * local configuration (org.mule.tools.cargo.container.configuration.Mule3xLocalConfiguration)
+
+    * deployable type (org.mule.tools.cargo.deployable.MuleApplicationDeployable)
+
++--
+...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.cargo</groupId>
+        <artifactId>cargo-maven2-plugin</artifactId>
+        <version>${cargo.version}</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.mule.tools.cargo</groupId>
+            <artifactId>container</artifactId>
+            <version>${version}</version>
+          </dependency>
+        </dependencies>
+        <configuration>
+          <wait>false</wait>
+          <container>
+            <containerId>mule3x</containerId>
+            <implementation>org.mule.tools.cargo.container.Mule3xInstalledLocalContainer</implementation>
+            <home>/Applications/mule-enterprise-standalone-3.1.1</home>
+          </container>
+          <configuration>
+            <implementation>org.mule.tools.cargo.container.configuration.Mule3xLocalConfiguration</implementation>
+          </configuration>
+          <deployer>
+            <implementation>org.mule.tools.cargo.deployer.FileDeployer</implementation>
+            <type>installed</type>
+            <deployables>
+              <deployable>
+                <implementation>org.mule.tools.cargo.deployable.MuleApplicationDeployable</implementation>
+                <groupId>org.mule.examples</groupId>
+                <artifactId>mule-example-echo</artifactId>
+                <type>zip</type>
+              </deployable>
+            </deployables>
+          </deployer>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+...
++--
+
+** Lifecycle binding
+
+ Cargo can be configured to be automatically started/stopped during the integration-test maven lifecycle through the binding concept.
+ Using following configuration associated maven container will be started before the integration phase and stopped after.
+
++--
+...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.cargo</groupId>
+        <artifactId>cargo-maven2-plugin</artifactId>
+        ...
+        <executions>
+          <execution>
+            <id>start-container</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>start</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>stop-container</id>
+            <phase>post-integration-test</phase>
+            <goals>
+              <goal>stop</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+...
++--
