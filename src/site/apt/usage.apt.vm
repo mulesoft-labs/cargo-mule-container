@@ -6,7 +6,7 @@ Configuration
 
 * Mule 3x Container
 
- This plugin provides 2 different implementations of Cargo container based on {{{standalone processing unit container}http://www.gigaspaces.com/wiki/display/OLH/Open+Spaces+Standalone+Processing+Unit+Container}}.
+ This plugin provides 2 different implementations of Cargo container.
 
 ** Embedded Container
 
