@@ -9,16 +9,18 @@ import org.mule.tools.cargo.deployable.MuleApplicationDeployable;
 import org.codehaus.cargo.container.deployable.Deployable;
 import org.codehaus.cargo.container.deployable.DeployableException;
 import org.codehaus.cargo.container.spi.deployer.AbstractInstalledLocalDeployer;
+import org.mule.module.launcher.DeploymentService;
 
 /**
  * Deploy {@link MuleApplicationDeployable} to a {@link Mule3xInstalledLocalContainer} by copying {@link MuleApplicationDeployable#getFile()} to {@link Mule3xInstalledLocalContainer#getHome()}/apps.
  */
 public class FileDeployer extends AbstractInstalledLocalDeployer {
 
-    private static final String ANCHOR_SUFFIX = "-anchor.txt";
     private static final long SLEEP_INTERVAL = 500L;
     private long maxFileWaitTime = FileDeployer.DEFAULT_MAX_FILE_WAIT_TIME;
     private static final long DEFAULT_MAX_FILE_WAIT_TIME = 60000L;
+    //Should match DeploymentService#DEFAULT_CHANGES_CHECK_INTERVAL_MS
+    private static final long DEFAULT_CHANGES_CHECK_INTERVAL_MS = 5000L;
     private static final String LOG_DEPLOY_CATEGORY = "deploy";
     private static final String LOG_UNDEPLOY_CATEGORY = "undeploy";
 
@@ -53,7 +55,7 @@ public class FileDeployer extends AbstractInstalledLocalDeployer {
      * @return anchor file for specified {@link Deployable}
      */
     protected final File getAnchorFile(final Deployable deployable) {
-        return new File(getAppsFolder(), extractName(deployable)+FileDeployer.ANCHOR_SUFFIX);
+        return new File(getAppsFolder(), extractName(deployable)+DeploymentService.APP_ANCHOR_SUFFIX);
     }
 
     /**
@@ -131,6 +133,13 @@ public class FileDeployer extends AbstractInstalledLocalDeployer {
         final String applicationName = extractName(deployable);
 
         getLogger().info("Undeploying <"+applicationName+">", FileDeployer.LOG_UNDEPLOY_CATEGORY);
+
+        try {
+            //Give AppDirWatcher a chance to notice app has been deployed.
+            Thread.sleep(FileDeployer.DEFAULT_CHANGES_CHECK_INTERVAL_MS);
+        } catch (InterruptedException ex) {
+            //Continue
+        }
 
         final File anchor = getAnchorFile(deployable);
         if (anchor.exists()) {

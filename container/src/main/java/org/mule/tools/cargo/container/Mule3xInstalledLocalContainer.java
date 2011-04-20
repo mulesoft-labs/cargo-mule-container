@@ -3,6 +3,7 @@ package org.mule.tools.cargo.container;
 import java.io.File;
 import java.net.URLClassLoader;
 import java.security.Permission;
+import org.apache.log4j.PropertyConfigurator;
 
 import org.apache.tools.ant.taskdefs.Java;
 import org.codehaus.cargo.container.ContainerCapability;
@@ -49,8 +50,6 @@ public class Mule3xInstalledLocalContainer extends AbstractInstalledLocalContain
         final File muleHome = MuleContainerBootstrap.lookupMuleHome();
         final File muleBase = MuleContainerBootstrap.lookupMuleBase();
         final DefaultMuleClassPathConfig config = new DefaultMuleClassPathConfig(muleHome, muleBase);
-        config.addFile(new File(getHome()+"/conf/"));
-        config.addFile(new File(getHome()+"/conf/log4j.properties"));
         return new MuleContainerSystemClassLoader(config);
     }
 
@@ -75,6 +74,8 @@ public class Mule3xInstalledLocalContainer extends AbstractInstalledLocalContain
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(createContainerSystemClassLoader());
         try {
+            PropertyConfigurator.configure(getHome()+"/conf/log4j.properties");
+
             getContainer().start(false);
         } finally {
             Thread.currentThread().setContextClassLoader(classLoader);
