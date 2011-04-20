@@ -40,6 +40,64 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>2.1.1</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <phase>site-deploy</phase>
+                        <id>deploy-gh-pages</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <target>
+                        <tstamp>
+                            <format property="now" pattern="yyyy-MM-dd hh:mm" />
+                        </tstamp>
+                        <exec executable="git" dir="${gh-pages-dir}" failonerror="true">
+                            <arg line="pull origin gh-pages" />
+                        </exec>
+                        <exec executable="git" dir="${gh-pages-dir}" failonerror="true">
+                            <arg line="add ." />
+                        </exec>
+                        <exec executable="git" dir="${gh-pages-dir}" failonerror="true">
+                            <arg line="commit -a -m 'update gh-pages ${project.version} ${now}'" />
+                        </exec>
+                        <exec executable="git" dir="${gh-pages-dir}" failonerror="true">
+                            <arg line="push origin gh-pages" />
+                        </exec>
+                    </target>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -51,5 +109,33 @@
             <layout>default</layout>
         </repository>
     </repositories>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.2</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>dependencies</report>
+                            <report>cim</report>
+                            <report>issue-tracking</report>
+                            <report>license</report>
+                            <report>scm</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <version>2.6</version>
+            </plugin>
+        </plugins>
+    </reporting>
 
 </project>
