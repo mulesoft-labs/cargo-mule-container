@@ -4,7 +4,7 @@ import org.codehaus.cargo.container.deployable.DeployableType;
 import org.codehaus.cargo.container.spi.deployable.AbstractDeployable;
 
 /**
- * A mule deployable. Matches http://www.mulesoft.org/documentation/display/MMP/Home packaging type.
+ * A mule application deployable. Matches http://www.mulesoft.org/documentation/display/MMP/Home packaging type.
  */
 public class MuleApplicationDeployable extends AbstractDeployable  {
 

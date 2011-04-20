@@ -2,7 +2,8 @@ Configuration
 
 * Mule Application Unit deployable
 
- Cargo deployable metaphor is implemented as org.mule.tools.cargo.deployable.MuleApplicationDeployable. This implementation which encapsulates Mule application is usable with all container types.
+ Cargo main deployable metaphor is encapsulated as org.mule.tools.cargo.deployable.MuleApplicationDeployable. This implementation which encapsulates Mule application is usable with all container types.
+ Alternatively embedded container supports simple configuration files encapsulated as org.mule.tools.cargo.deployable.MuleConfigurationDeployable.
 
 * Mule 3x Container
 
@@ -15,15 +16,17 @@ Configuration
 
  When using this container you will need to provide:
 
-    * mule dependencies dependency definition
+    * mule dependency definitions
 
-    * your application dependencies
+    * your application dependencies (if deploying an application)
 
  This container is implemented by org.mule.tools.cargo.container.Mule3xEmbeddedLocalContainer class and must be used with associated:
 
     * local configuration (org.mule.tools.cargo.container.configuration.Mule3xLocalConfiguration)
 
-    * deployable type (org.mule.tools.cargo.deployable.MuleApplicationDeployable)
+    * deployable type (either org.mule.tools.cargo.deployable.MuleApplicationDeployable or org.mule.tools.cargo.deployable.MuleConfigurationDeployable)
+
+Example using a mule application:
 
 +--
 ...
@@ -73,6 +76,54 @@ Configuration
   ...
 +--
 
+Or using a simple mule-config.xml:
+
++--
+...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.cargo</groupId>
+        <artifactId>cargo-maven2-plugin</artifactId>
+        <version>${cargo.version}</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.mule.tools.cargo</groupId>
+            <artifactId>container</artifactId>
+            <version>${version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.mule.modules</groupId>
+            <artifactId>mule-module-cxf</artifactId>
+            <version>${mule.version}</version>
+          </dependency>
+        </dependencies>
+        <configuration>
+          <wait>false</wait>
+          <container>
+            <containerId>mule3x</containerId>
+            <implementation>org.mule.tools.cargo.container.Mule3xEmbeddedLocalContainer</implementation>
+            <type>embedded</type>
+          </container>
+          <configuration>
+            <implementation>org.mule.tools.cargo.container.configuration.Mule3xLocalConfiguration</implementation>
+            <deployables>
+              <deployable>
+                <implementation>org.mule.tools.cargo.deployable.MuleConfigurationDeployable</implementation>
+                <location>/path/to/your/mul-config.xml</location>
+              </deployable>
+            </deployables>
+            <properties>
+              <log4j.properties>/Applications/mule-enterprise-standalone-${mule.version}/conf/log4j.properties</log4j.properties>
+            </properties>
+          </configuration>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  ...
++--
+
 ** Installed Container
 
  Allows to start a container using a local Mule installation.
@@ -87,6 +138,8 @@ Configuration
     * local configuration (org.mule.tools.cargo.container.configuration.Mule3xLocalConfiguration)
 
     * deployable type (org.mule.tools.cargo.deployable.MuleApplicationDeployable)
+
+Example using a mule application:
 
 +--
 ...
