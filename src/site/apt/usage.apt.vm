@@ -26,7 +26,7 @@ Configuration
 
     * deployable type (either org.mule.tools.cargo.deployable.MuleApplicationDeployable or org.mule.tools.cargo.deployable.MuleConfigurationDeployable)
 
-Example using a mule application:
+ Example using a mule application:
 
 +--
 ...
@@ -76,7 +76,7 @@ Example using a mule application:
   ...
 +--
 
-Or using a simple mule-config.xml:
+ Or using a simple mule-config.xml:
 
 +--
 ...
@@ -139,7 +139,7 @@ Or using a simple mule-config.xml:
 
     * deployable type (org.mule.tools.cargo.deployable.MuleApplicationDeployable)
 
-Example using a mule application:
+ Example using a mule application:
 
 +--
 ...
