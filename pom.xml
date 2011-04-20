@@ -110,6 +110,13 @@
         </repository>
     </repositories>
 
+    <distributionManagement>
+        <site>
+            <id>gh-pages</id>
+            <url>file://${gh-pages-dir}</url>
+        </site>
+    </distributionManagement>
+
     <reporting>
         <plugins>
             <plugin>
