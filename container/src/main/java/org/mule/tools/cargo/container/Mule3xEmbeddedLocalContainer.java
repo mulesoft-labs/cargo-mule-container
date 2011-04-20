@@ -5,6 +5,12 @@ import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
+import org.apache.log4j.PropertyConfigurator;
 
 import org.codehaus.cargo.container.ContainerCapability;
 import org.codehaus.cargo.container.configuration.LocalConfiguration;
@@ -22,6 +28,7 @@ public class Mule3xEmbeddedLocalContainer extends AbstractEmbeddedLocalContainer
     public static final String ID = "mule3x";
     public static final String NAME = "Mule 3.x Embedded";
     private MuleServer server;
+    private static String LOG4J_PROPERTIES = "log4j.properties";
 
     public Mule3xEmbeddedLocalContainer(final LocalConfiguration configuration) {
         super(configuration);
@@ -70,10 +77,20 @@ public class Mule3xEmbeddedLocalContainer extends AbstractEmbeddedLocalContainer
         return (MuleApplicationDeployable) deployables.get(0);
     }
 
+    protected final void configureLog4j() {
+        final String log4jProperties = getConfiguration().getPropertyValue(Mule3xEmbeddedLocalContainer.LOG4J_PROPERTIES);
+        if (log4jProperties == null) {
+            final Logger root = Logger.getRootLogger();
+            root.setLevel(Level.INFO);
+            root.addAppender(new ConsoleAppender(new PatternLayout(PatternLayout.TTCC_CONVERSION_PATTERN)));
+        } else {
+            PropertyConfigurator.configure(log4jProperties);
+        }
+    }
+
     @Override
     protected void doStart() throws Exception {
         //TODO Add support for embedded lib directory
-        //TODO Log4j configuration?
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final MuleApplicationDeployable muleApplication = getMuleApplication();
         final URLClassLoader applicationClassLoader = URLClassLoader.newInstance(new URL[]{
@@ -82,6 +99,8 @@ public class Mule3xEmbeddedLocalContainer extends AbstractEmbeddedLocalContainer
         }, getClassLoader());
         Thread.currentThread().setContextClassLoader(applicationClassLoader);
         try {
+            configureLog4j();
+
             getServer().start(false, false);
         } finally {
             Thread.currentThread().setContextClassLoader(classLoader);

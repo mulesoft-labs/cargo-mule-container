@@ -62,6 +62,9 @@ Configuration
                 <type>zip</type>
               </deployable>
             </deployables>
+            <properties>
+              <log4j.properties>/Applications/mule-enterprise-standalone-3.1.1/conf/log4j.properties</log4j.properties>
+            </properties>
           </configuration>
         </configuration>
       </plugin>
