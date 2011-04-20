@@ -116,6 +116,17 @@
     </scm>
 
     <distributionManagement>
+        <repository>
+            <id>muleforge.webdav.releases</id>
+            <name>MuleSoft Release Repository</name>
+            <url>dav:https://repository.muleforge.org/release/</url>
+        </repository>
+        <snapshotRepository>
+            <id>muleforge.webdav.snapshots</id>
+            <name>MuleSoft Snapshot Repository</name>
+            <url>dav:https://repository.muleforge.org/snapshot/</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
         <site>
             <id>gh-pages</id>
             <url>file://${gh-pages-dir}</url>
