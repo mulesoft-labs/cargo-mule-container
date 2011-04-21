@@ -14,9 +14,8 @@
     </parent>
 
     <modules>
-        <!--module>embedded</module>
-        <module>installed</module-->
-        <module>remote</module>
+        <module>embedded</module>
+        <module>installed</module>
     </modules>
 
     <dependencies>
