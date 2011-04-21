@@ -21,8 +21,8 @@ public class FileDeployer extends AbstractInstalledLocalDeployer {
     private static final long DEFAULT_MAX_FILE_WAIT_TIME = 60000L;
     //Should match DeploymentService#DEFAULT_CHANGES_CHECK_INTERVAL_MS
     private static final long DEFAULT_CHANGES_CHECK_INTERVAL_MS = 5000L;
-    private static final String LOG_DEPLOY_CATEGORY = "deploy";
-    private static final String LOG_UNDEPLOY_CATEGORY = "undeploy";
+    private static final String LOG_DEPLOY_CATEGORY = "mule3x:deploy";
+    private static final String LOG_UNDEPLOY_CATEGORY = "mule3x:undeploy";
 
     public FileDeployer(final InstalledLocalContainer container) {
         super(container);
