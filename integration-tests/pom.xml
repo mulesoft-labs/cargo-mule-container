@@ -16,6 +16,7 @@
     <modules>
         <module>embedded</module>
         <module>installed</module>
+        <module>ion</module>
     </modules>
 
     <dependencies>

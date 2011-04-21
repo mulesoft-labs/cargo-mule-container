@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.mule.tools.cargo.integration-tests</groupId>
+    <artifactId>ion</artifactId>
+
+    <parent>
+        <groupId>org.mule.tools.cargo</groupId>
+        <artifactId>integration-tests</artifactId>
+        <version>0.9.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.mule.examples</groupId>
+            <artifactId>mule-example-echo</artifactId>
+            <version>${mule.version}</version>
+            <type>zip</type>
+        </dependency>
+    </dependencies>
+
+    <name>ION container integration test</name>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.cargo</groupId>
+                <artifactId>cargo-maven2-plugin</artifactId>
+                <version>${cargo.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.mule.tools.cargo</groupId>
+                        <artifactId>container</artifactId>
+                        <version>${version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <wait>false</wait>
+                    <container>
+                        <containerId>ion</containerId>
+                        <implementation>org.mule.tools.cargo.container.IONContainer</implementation>
+                        <type>remote</type>
+                    </container>
+                    <configuration>
+                        <implementation>org.mule.tools.cargo.container.configuration.IONConfiguration</implementation>
+                        <type>runtime</type>
+                        <properties>
+                            <domain>${ion.domain}</domain>
+                            <username>${ion.username}</username>
+                            <password>${ion.password}</password>
+                            <workers>${ion.workers}</workers>
+                        </properties>
+                    </configuration>
+                    <deployer>
+                        <implementation>org.mule.tools.cargo.deployer.IONDeployer</implementation>
+                        <type>remote</type>
+                        <deployables>
+                            <deployable>
+                                <implementation>org.mule.tools.cargo.deployable.MuleApplicationDeployable</implementation>
+                                <groupId>org.mule.examples</groupId>
+                                <artifactId>mule-example-echo</artifactId>
+                                <type>zip</type>
+                            </deployable>
+                        </deployables>
+                    </deployer>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>deploy</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>deploy</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>undeploy</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <!--goal>undeploy</goal-->
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

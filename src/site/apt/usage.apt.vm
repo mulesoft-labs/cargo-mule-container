@@ -7,7 +7,7 @@ Configuration
 
 * Mule 3x Container
 
- This plugin provides 2 different implementations of Cargo container.
+ This plugin provides 3 different implementations of Cargo container.
 
 ** Embedded Container
 
@@ -169,6 +169,74 @@ Configuration
           <deployer>
             <implementation>org.mule.tools.cargo.deployer.FileDeployer</implementation>
             <type>installed</type>
+            <deployables>
+              <deployable>
+                <implementation>org.mule.tools.cargo.deployable.MuleApplicationDeployable</implementation>
+                <groupId>org.mule.examples</groupId>
+                <artifactId>mule-example-echo</artifactId>
+                <type>zip</type>
+              </deployable>
+            </deployables>
+          </deployer>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+...
++--
+
+** iON Container
+
+ Allows to connect to your iON domain.
+ This container implementation does not support deployable and only iON deployer implementation can be used.
+
+ When using this container you will need to provide:
+
+    * your iON domain/credential details
+
+ This container is implemented by org.mule.tools.cargo.container.IONContainer class and must be used with associated:
+
+    * remote configuration (org.mule.tools.cargo.container.configuration.IONConfiguration)
+
+    * deployable type (org.mule.tools.cargo.deployable.MuleApplicationDeployable)
+
+ Example using a mule application:
+
++--
+...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.cargo</groupId>
+        <artifactId>cargo-maven2-plugin</artifactId>
+        <version>${cargo.version}</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.mule.tools.cargo</groupId>
+            <artifactId>container</artifactId>
+            <version>${version}</version>
+          </dependency>
+        </dependencies>
+        <configuration>
+          <wait>false</wait>
+          <container>
+            <containerId>ion</containerId>
+            <implementation>org.mule.tools.cargo.container.IONContainer</implementation>
+            <type>remote</type>
+          </container>
+          <configuration>
+            <implementation>org.mule.tools.cargo.container.configuration.IONConfiguration</implementation>
+            <type>runtime</type>
+            <properties>
+                <domain>YOUR_DOMAIN</domain>
+                <username>YOUR_USERNAME</username>
+                <password>YOUR_PASSWORD</password>
+                <workers>1</workers>
+            </properties>
+          </configuration>
+          <deployer>
+            <implementation>org.mule.tools.cargo.deployer.IONDeployer</implementation>
+            <type>remote</type>
             <deployables>
               <deployable>
                 <implementation>org.mule.tools.cargo.deployable.MuleApplicationDeployable</implementation>
