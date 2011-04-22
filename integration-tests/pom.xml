@@ -19,14 +19,14 @@
         <module>ion</module>
     </modules>
 
-    <dependencies>
+    <!--dependencies>
         <dependency>
             <groupId>org.mule.tools.cargo</groupId>
             <artifactId>container</artifactId>
             <version>0.9.1-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
-    </dependencies>
+    </dependencies-->
 
     <name>Integration tests</name>
 
