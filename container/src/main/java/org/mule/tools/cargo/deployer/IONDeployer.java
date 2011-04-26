@@ -9,11 +9,7 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.json.JSONConfiguration;
 import com.sun.jersey.core.util.Base64;
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
@@ -99,11 +95,6 @@ public class IONDeployer extends AbstractDeployer {
     @Override
     public void deploy(final Deployable deployable) {
         final String domain = getConfiguration().getDomain();
-        try {
-            new URL("http://muleion.com/api/applications/julien").openConnection().connect();
-        } catch (Exception ex) {
-            Logger.getLogger(IONDeployer.class.getName()).log(Level.SEVERE, null, ex);
-        }
         ensureIONApplicationExists(domain);
 
         getLogger().info("Deploying <"+deployable.getFile()+">", IONDeployer.LOG_DEPLOY_CATEGORY);
@@ -153,11 +144,6 @@ public class IONDeployer extends AbstractDeployer {
     @Override
     public void undeploy(final Deployable deployable) {
         final String domain = getConfiguration().getDomain();
-        try {
-            new URL("http://muleion.com/api/applications/julien").openConnection().connect();
-        } catch (Exception ex) {
-            Logger.getLogger(IONDeployer.class.getName()).log(Level.SEVERE, null, ex);
-        }
         ensureIONApplicationExists(domain);
 
         final Application application = getIONApplication(domain);
