@@ -9,7 +9,11 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.json.JSONConfiguration;
 import com.sun.jersey.core.util.Base64;
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
@@ -77,23 +81,55 @@ public class IONDeployer extends AbstractDeployer {
 
     protected final void updateIONApplication(final String domain, final Application application) {
         final ClientResponse.Status status = createBuilder(domain).type(MediaType.APPLICATION_JSON_TYPE).put(ClientResponse.class, application).getClientResponseStatus();
-        if (status != ClientResponse.Status.OK) {
+        if (!(status == ClientResponse.Status.OK || status == ClientResponse.Status.CREATED)) {
             throw new DeployableException("Failed to update <"+domain+">: "+status.getStatusCode()+"("+status.getReasonPhrase()+")");
+        }
+    }
+
+    /**
+     * @param domain
+     * @throws DeployableException if iON application does not exist
+     */
+    protected final void ensureIONApplicationExists(final String domain) {
+        if (!isIONApplicationCreated(domain)) {
+            throw new DeployableException("iON Application <"+domain+"> does not exit");
         }
     }
 
     @Override
     public void deploy(final Deployable deployable) {
         final String domain = getConfiguration().getDomain();
-        if (!isIONApplicationCreated(domain)) {
-            throw new DeployableException("iON Application <"+domain+"> does not exit");
+        try {
+            new URL("http://muleion.com/api/applications/julien").openConnection().connect();
+        } catch (Exception ex) {
+            Logger.getLogger(IONDeployer.class.getName()).log(Level.SEVERE, null, ex);
         }
+        ensureIONApplicationExists(domain);
 
         getLogger().info("Deploying <"+deployable.getFile()+">", IONDeployer.LOG_DEPLOY_CATEGORY);
 
-        final ClientResponse.Status status = createBuilder(domain+"/deploy").type(MediaType.APPLICATION_OCTET_STREAM_TYPE).post(ClientResponse.class, new File(deployable.getFile())).getClientResponseStatus();
-        if (status != ClientResponse.Status.OK) {
-            throw new DeployableException("Failed to deploy <"+domain+">: "+status.getStatusCode()+"("+status.getReasonPhrase()+")");
+        final Application application = getIONApplication(domain);
+        switch (application.getStatus()) {
+            case STARTED:
+            case UNDEPLOYED:
+                final ClientResponse.Status status = createBuilder(domain+"/deploy").type(MediaType.APPLICATION_OCTET_STREAM_TYPE).post(ClientResponse.class, new File(deployable.getFile())).getClientResponseStatus();
+                if (status != ClientResponse.Status.OK) {
+                    throw new DeployableException("Failed to deploy <"+domain+">: "+status.getStatusCode()+"("+status.getReasonPhrase()+")");
+                }
+                final int workers = getConfiguration().getWorkers();
+                if (application.getWorkers() == workers) {
+                    getLogger().info("Forcing redeployment", IONDeployer.LOG_DEPLOY_CATEGORY);
+                } else {
+                    getLogger().info("Scaling workers to <"+workers+">", IONDeployer.LOG_DEPLOY_CATEGORY);
+
+                    application.setWorkers(workers);
+                    updateIONApplication(domain, application);
+                }
+                break;
+            case DEPLOYING:
+                throw new DeployableException("Another deployment is in progress");
+            default:
+                throw new DeployableException("Unhandled status <"+application.getStatus()+">");
         }
 
         getLogger().info("Waiting for deployment", IONDeployer.LOG_DEPLOY_CATEGORY);
@@ -117,6 +153,13 @@ public class IONDeployer extends AbstractDeployer {
     @Override
     public void undeploy(final Deployable deployable) {
         final String domain = getConfiguration().getDomain();
+        try {
+            new URL("http://muleion.com/api/applications/julien").openConnection().connect();
+        } catch (Exception ex) {
+            Logger.getLogger(IONDeployer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        ensureIONApplicationExists(domain);
+
         final Application application = getIONApplication(domain);
         application.setWorkers(0);
 

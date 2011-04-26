@@ -12,7 +12,8 @@ public class Application {
     public enum Status {
         DEPLOYING,
         STARTED,
-        UNDEPLOYED
+        UNDEPLOYED,
+        DEPLOY_FAILED
     }
 
     public static class WorkerStatus {
