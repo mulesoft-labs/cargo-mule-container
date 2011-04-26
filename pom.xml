@@ -11,8 +11,16 @@
 
     <modules>
         <module>container</module>
-        <module>integration-tests</module>
     </modules>
+
+    <profiles>
+        <profile>
+            <id>integration-tests</id>
+            <modules>
+                <module>integration-tests</module>
+            </modules>
+        </profile>
+    </profiles>
 
     <properties>
         <cargo.version>1.0.6</cargo.version>
@@ -111,27 +119,27 @@
     </build>
 
     <scm>
-      <connection>
+        <connection>
          scm:git:git://github.com/mulesoft/cargo-mule-container.git
-      </connection>
-      <developerConnection>
+        </connection>
+        <developerConnection>
          scm:git:ssh://git@github.com/mulesoft/cargo-mule-container.git
-      </developerConnection>
-      <url>
+        </developerConnection>
+        <url>
          https://github.com/mulesoft/cargo-mule-container
-      </url>
+        </url>
     </scm>
 
     <distributionManagement>
         <repository>
-            <id>muleforge.webdav.releases</id>
+            <id>mulesoft.releases</id>
             <name>MuleSoft Release Repository</name>
-            <url>dav:https://repository.muleforge.org/release/</url>
+            <url>https://repository.mulesoft.org/releases/</url>
         </repository>
         <snapshotRepository>
-            <id>muleforge.webdav.snapshots</id>
+            <id>mulesoft.snapshots</id>
             <name>MuleSoft Snapshot Repository</name>
-            <url>dav:https://repository.muleforge.org/snapshot/</url>
+            <url>https://repository.mulesoft.org/snapshots/</url>
             <uniqueVersion>false</uniqueVersion>
         </snapshotRepository>
         <site>
