@@ -1,9 +1,11 @@
 package org.mule.tools.cargo.container;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URLClassLoader;
 import java.security.Permission;
-import org.apache.log4j.PropertyConfigurator;
 
 import org.apache.tools.ant.taskdefs.Java;
 import org.codehaus.cargo.container.ContainerCapability;
@@ -25,7 +27,9 @@ public class Mule3xInstalledLocalContainer extends AbstractInstalledLocalContain
     public static final String NAME = "Mule 3.x Installed";
     private static final String MULE_HOME = "mule.home";
     private static final String MULE_BASE = "mule.base";
-    private MuleContainer container;
+    private static final String LOG_CATEGORY = "mule:installed";
+    private Object container;
+    private static final String MULE_CONTAINER_CLASSNAME = "org.mule.module.launcher.MuleContainer";
 
     public Mule3xInstalledLocalContainer(final LocalConfiguration configuration) {
         super(configuration);
@@ -46,10 +50,15 @@ public class Mule3xInstalledLocalContainer extends AbstractInstalledLocalContain
         return new MuleContainerCapability();
     }
 
-    protected URLClassLoader createContainerSystemClassLoader() throws Exception {
+    protected final URLClassLoader createContainerSystemClassLoader() throws Exception {
         final File muleHome = MuleContainerBootstrap.lookupMuleHome();
         final File muleBase = MuleContainerBootstrap.lookupMuleBase();
-        final DefaultMuleClassPathConfig config = new DefaultMuleClassPathConfig(muleHome, muleBase);
+        final DefaultMuleClassPathConfig config = new DefaultMuleClassPathConfig(muleHome, muleBase) {
+            {
+                addLibraryDirectory(muleHome, "/lib/boot");
+                addLibraryDirectory(muleHome, "/lib/conf");
+            }
+        };
         return new MuleContainerSystemClassLoader(config);
     }
 
@@ -60,23 +69,31 @@ public class Mule3xInstalledLocalContainer extends AbstractInstalledLocalContain
         return new MuleContainer();
     }
 
-    protected final synchronized  MuleContainer getContainer() {
-        if (this.container == null) {
-            this.container = createContainer();
+    protected final void ensureValidMuleHome(final String home) {
+        final File homeFile = new File(getHome());
+        if (!(homeFile.exists() && homeFile.isDirectory())) {
+            throw new IllegalArgumentException("Invalid mule home <"+home+">");
         }
-        return this.container;
     }
 
     @Override
     protected void doStart(final Java java) throws Exception {
-        System.setProperty(Mule3xInstalledLocalContainer.MULE_HOME, getHome());
-        System.setProperty(Mule3xInstalledLocalContainer.MULE_BASE, getHome());
-        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(createContainerSystemClassLoader());
-        try {
-            PropertyConfigurator.configure(getHome()+"/conf/log4j.properties");
+        final String home = getHome();
+        ensureValidMuleHome(home);
 
-            getContainer().start(false);
+        getLogger().info("Using mule installation <"+home+">", Mule3xInstalledLocalContainer.LOG_CATEGORY);
+
+        System.setProperty(Mule3xInstalledLocalContainer.MULE_HOME, home);
+        System.setProperty(Mule3xInstalledLocalContainer.MULE_BASE, home);
+        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        final URLClassLoader muleClassLoader = createContainerSystemClassLoader();
+        Thread.currentThread().setContextClassLoader(muleClassLoader);
+        try {
+            final Class<?> muleClass = Thread.currentThread().getContextClassLoader().loadClass(Mule3xInstalledLocalContainer.MULE_CONTAINER_CLASSNAME);
+            final Constructor<?> c = muleClass.getConstructor();
+            this.container = c.newInstance(new Object[] {});
+            final Method startMethod = muleClass.getMethod("start", boolean.class);
+            startMethod.invoke(this.container, false);
         } finally {
             Thread.currentThread().setContextClassLoader(classLoader);
         }
@@ -91,18 +108,23 @@ public class Mule3xInstalledLocalContainer extends AbstractInstalledLocalContain
         //Ugly hack to prevent MuleContainer#shutdown to call System#exit()
         final SecurityManager securityManager = System.getSecurityManager();
         try {
+            final RuntimeException exception = new RuntimeException();
             System.setSecurityManager(new SecurityManager() {
                 @Override
-                public void checkPermission(Permission prmsn) {
+                public void checkPermission(final Permission permission) {
                 }
                 @Override
-                public void checkExit(int i) {
-                    throw new IllegalArgumentException();
+                public void checkExit(final int i) {
+                    throw exception;
                 }
             });
             try {
-                getContainer().shutdown();
-            } catch (IllegalArgumentException e) {
+                final Method shutdownMethod = this.container.getClass().getMethod("shutdown");
+                shutdownMethod.invoke(this.container);
+            } catch (InvocationTargetException e) {
+                if (e.getCause() != exception) {
+                    throw e;
+                }
             }
         } finally {
             System.setSecurityManager(securityManager);
