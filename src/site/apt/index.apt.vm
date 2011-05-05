@@ -1,3 +1,7 @@
+Introduction
+
+ This project provides a {{{http://cargo.codehaus.org/}Cargo}} implementation for {{{http://www.mulesoft.org}Mule}} container.
+
 Configuration
 
 * Mule Application Unit deployable
@@ -7,7 +11,7 @@ Configuration
 
 * Mule 3x Container
 
- This plugin provides 3 different implementations of Cargo container.
+ This plugin provides 3 different implementations of Cargo container: Embedded, Installed and iON.
 
 ** Embedded Container
 
@@ -65,9 +69,6 @@ Configuration
                 <type>zip</type>
               </deployable>
             </deployables>
-            <properties>
-              <log4j.properties>/Applications/mule-enterprise-standalone-${mule.version}/conf/log4j.properties</log4j.properties>
-            </properties>
           </configuration>
         </configuration>
       </plugin>
@@ -110,12 +111,9 @@ Configuration
             <deployables>
               <deployable>
                 <implementation>org.mule.tools.cargo.deployable.MuleConfigurationDeployable</implementation>
-                <location>/path/to/your/mul-config.xml</location>
+                <location>/path/to/your/mule-config.xml</location>
               </deployable>
             </deployables>
-            <properties>
-              <log4j.properties>/Applications/mule-enterprise-standalone-${mule.version}/conf/log4j.properties</log4j.properties>
-            </properties>
           </configuration>
         </configuration>
       </plugin>
@@ -161,7 +159,7 @@ Configuration
           <container>
             <containerId>mule3x</containerId>
             <implementation>org.mule.tools.cargo.container.Mule3xInstalledLocalContainer</implementation>
-            <home>/Applications/mule-enterprise-standalone-3.1.1</home>
+            <home>/path/to/your/mule/home</home>
           </container>
           <configuration>
             <implementation>org.mule.tools.cargo.container.configuration.Mule3xLocalConfiguration</implementation>
@@ -185,7 +183,79 @@ Configuration
 ...
 +--
 
-** iON Container
+ Or using the regular mule-standalone distribution as dependency:
+
++--
+...
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack</id>
+            <phase>package</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.mule.distributions</groupId>
+                  <artifactId>mule-standalone</artifactId>
+                  <version>${mule.version}</version>
+                  <type>zip</type>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${mule.distribution}</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+              <overWriteReleases>true</overWriteReleases>
+              <overWriteSnapshots>true</overWriteSnapshots>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.cargo</groupId>
+        <artifactId>cargo-maven2-plugin</artifactId>
+        <version>${cargo.version}</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.mule.tools.cargo</groupId>
+            <artifactId>container</artifactId>
+            <version>${version}</version>
+          </dependency>
+        </dependencies>
+        <configuration>
+          <wait>false</wait>
+          <container>
+            <containerId>mule3x</containerId>
+            <implementation>org.mule.tools.cargo.container.Mule3xInstalledLocalContainer</implementation>
+            <home>${mule.distribution}/mule-standalone-${mule.version}</home>
+          </container>
+          <configuration>
+            <implementation>org.mule.tools.cargo.container.configuration.Mule3xLocalConfiguration</implementation>
+          </configuration>
+          <deployer>
+            <implementation>org.mule.tools.cargo.deployer.FileDeployer</implementation>
+            <type>installed</type>
+            <deployables>
+              <deployable>
+                <implementation>org.mule.tools.cargo.deployable.MuleApplicationDeployable</implementation>
+                <groupId>org.mule.examples</groupId>
+                <artifactId>mule-example-echo</artifactId>
+                <type>zip</type>
+              </deployable>
+            </deployables>
+          </deployer>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+...
++--
+
+* iON Container
 
  Allows to connect to your iON domain.
  This container implementation does not support deployable and only iON deployer implementation can be used.
@@ -253,7 +323,7 @@ Configuration
 ...
 +--
 
-** Lifecycle binding
+* Lifecycle binding
 
  Cargo can be configured to be automatically started/stopped during the integration-test maven lifecycle through the binding concept.
  Using following configuration associated maven container will be started before the integration phase and stopped after.
