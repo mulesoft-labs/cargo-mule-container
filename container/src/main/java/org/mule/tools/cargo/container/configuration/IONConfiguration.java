@@ -27,7 +27,7 @@ public class IONConfiguration extends AbstractRuntimeConfiguration {
                 final Map<String, Boolean> propertySupportMap = new HashMap<String, Boolean>();
                 return propertySupportMap;
             }
-            
+
         };
     }
 
@@ -55,7 +55,7 @@ public class IONConfiguration extends AbstractRuntimeConfiguration {
         return workers;
     }
 
-    @Override
+    /*@Override
     public Map<String, String> getProperties() {
         final Map<String, String> properties = new HashMap<String, String>(super.getProperties());
         properties.remove(IONConfiguration.DOMAIN_PROPERTY);
@@ -63,7 +63,7 @@ public class IONConfiguration extends AbstractRuntimeConfiguration {
         properties.remove(IONConfiguration.PASSWORD_PROPERTY);
         properties.remove(IONConfiguration.WORKERS_PROPERTY);
         return properties;
-    }
+    }*/
 
     protected final void ensurePropertyProvided(final String property) {
         if (getPropertyValue(property) == null) {

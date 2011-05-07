@@ -7,10 +7,10 @@ import java.lang.reflect.Method;
 import java.net.URLClassLoader;
 import java.security.Permission;
 
-import org.apache.tools.ant.taskdefs.Java;
 import org.codehaus.cargo.container.ContainerCapability;
 import org.codehaus.cargo.container.configuration.LocalConfiguration;
 import org.codehaus.cargo.container.spi.AbstractInstalledLocalContainer;
+import org.codehaus.cargo.container.spi.jvm.JvmLauncher;
 import org.mule.module.launcher.MuleContainer;
 import org.mule.module.reboot.DefaultMuleClassPathConfig;
 import org.mule.module.reboot.MuleContainerBootstrap;
@@ -77,7 +77,7 @@ public class Mule3xInstalledLocalContainer extends AbstractInstalledLocalContain
     }
 
     @Override
-    protected void doStart(final Java java) throws Exception {
+    protected void doStart(final JvmLauncher launcher) throws Exception {
         final String home = getHome();
         ensureValidMuleHome(home);
 
@@ -104,7 +104,7 @@ public class Mule3xInstalledLocalContainer extends AbstractInstalledLocalContain
     }
 
     @Override
-    protected void doStop(final Java java) throws Exception {
+    protected void doStop(final JvmLauncher launcher) throws Exception {
         //Ugly hack to prevent MuleContainer#shutdown to call System#exit()
         final SecurityManager securityManager = System.getSecurityManager();
         try {
