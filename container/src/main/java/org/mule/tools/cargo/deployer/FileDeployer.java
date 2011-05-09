@@ -72,7 +72,7 @@ public class FileDeployer extends AbstractInstalledLocalDeployer {
      */
     protected final String extractName(final Deployable deployable) {
         final String fileName = deployable.getFile();
-        return fileName.substring(fileName.lastIndexOf(File.pathSeparator)+1, fileName.length()-4);
+        return fileName.substring(fileName.lastIndexOf(File.separator)+1, fileName.length()-4);
     }
 
     /**
