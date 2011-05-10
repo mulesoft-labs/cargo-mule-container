@@ -80,7 +80,7 @@
                 <version>2.1</version>
                 <configuration>
                     <mavenExecutorId>forked-path</mavenExecutorId>
-                    <preparationGoals>clean install -Pintegration-tests</preparationGoals>
+                    <preparationGoals>clean install</preparationGoals>
                 </configuration>
             </plugin>
             <plugin>
