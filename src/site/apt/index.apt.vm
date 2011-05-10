@@ -2,6 +2,26 @@ Introduction
 
  This project provides a {{{http://cargo.codehaus.org/}Cargo}} implementation for {{{http://www.mulesoft.org}Mule}} container.
 
+Setup
+
+ To use cargo-mule-container you will need to:
+ * define mulesoft.org release repository
+ * add cargo-mule-container as a dependency to cargo
+
+ Defining mulesoft.org release repository:
+
++--
+...
+  <repositories>
+    <repository>
+      <id>muleforge-release</id>
+      <name>MuleForge Release Repository</name>
+      <url>http://repository.mulesoft.org/releases/</url>
+    </repository>
+  </repositories>
+...
++--
+
 Configuration
 
 * Mule Application Unit deployable
@@ -39,17 +59,17 @@ Configuration
       <plugin>
         <groupId>org.codehaus.cargo</groupId>
         <artifactId>cargo-maven2-plugin</artifactId>
-        <version>${cargo.version}</version>
+        <version>${cargoVersion}</version>
         <dependencies>
           <dependency>
             <groupId>org.mule.tools.cargo</groupId>
             <artifactId>container</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
           </dependency>
           <dependency>
             <groupId>org.mule.modules</groupId>
             <artifactId>mule-module-cxf</artifactId>
-            <version>${mule.version}</version>
+            <version>${muleVersion}</version>
           </dependency>
         </dependencies>
         <configuration>
@@ -86,17 +106,17 @@ Configuration
       <plugin>
         <groupId>org.codehaus.cargo</groupId>
         <artifactId>cargo-maven2-plugin</artifactId>
-        <version>${cargo.version}</version>
+        <version>${cargoVersion}</version>
         <dependencies>
           <dependency>
             <groupId>org.mule.tools.cargo</groupId>
             <artifactId>container</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
           </dependency>
           <dependency>
             <groupId>org.mule.modules</groupId>
             <artifactId>mule-module-cxf</artifactId>
-            <version>${mule.version}</version>
+            <version>${muleVersion}</version>
           </dependency>
         </dependencies>
         <configuration>
@@ -146,12 +166,12 @@ Configuration
       <plugin>
         <groupId>org.codehaus.cargo</groupId>
         <artifactId>cargo-maven2-plugin</artifactId>
-        <version>${cargo.version}</version>
+        <version>${cargoVersion}</version>
         <dependencies>
           <dependency>
             <groupId>org.mule.tools.cargo</groupId>
             <artifactId>container</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
           </dependency>
         </dependencies>
         <configuration>
@@ -203,7 +223,7 @@ Configuration
                 <artifactItem>
                   <groupId>org.mule.distributions</groupId>
                   <artifactId>mule-standalone</artifactId>
-                  <version>${mule.version}</version>
+                  <version>${muleVersion}</version>
                   <type>zip</type>
                   <overWrite>true</overWrite>
                   <outputDirectory>${mule.distribution}</outputDirectory>
@@ -218,12 +238,12 @@ Configuration
       <plugin>
         <groupId>org.codehaus.cargo</groupId>
         <artifactId>cargo-maven2-plugin</artifactId>
-        <version>${cargo.version}</version>
+        <version>${cargoVersion}</version>
         <dependencies>
           <dependency>
             <groupId>org.mule.tools.cargo</groupId>
             <artifactId>container</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
           </dependency>
         </dependencies>
         <configuration>
@@ -231,7 +251,7 @@ Configuration
           <container>
             <containerId>mule3x</containerId>
             <implementation>org.mule.tools.cargo.container.Mule3xInstalledLocalContainer</implementation>
-            <home>${mule.distribution}/mule-standalone-${mule.version}</home>
+            <home>${mule.distribution}/mule-standalone-${muleVersion}</home>
           </container>
           <configuration>
             <implementation>org.mule.tools.cargo.container.configuration.Mule3xLocalConfiguration</implementation>
@@ -279,12 +299,12 @@ Configuration
       <plugin>
         <groupId>org.codehaus.cargo</groupId>
         <artifactId>cargo-maven2-plugin</artifactId>
-        <version>${cargo.version}</version>
+        <version>${cargoVersion}</version>
         <dependencies>
           <dependency>
             <groupId>org.mule.tools.cargo</groupId>
             <artifactId>container</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
           </dependency>
         </dependencies>
         <configuration>

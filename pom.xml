@@ -23,8 +23,8 @@
     </profiles>
 
     <properties>
-        <cargo.version>1.1.0</cargo.version>
-        <mule.version>3.1.1</mule.version>
+        <cargoVersion>1.1.0</cargoVersion>
+        <muleVersion>3.1.1</muleVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <gh-pages-dir>/Users/julien/Documents/Projects/cargo-mule-container-gh-pages</gh-pages-dir>
     </properties>

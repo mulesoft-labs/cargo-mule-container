@@ -16,7 +16,7 @@
         <dependency>
             <groupId>org.mule.examples</groupId>
             <artifactId>mule-example-echo</artifactId>
-            <version>${mule.version}</version>
+            <version>${muleVersion}</version>
             <type>zip</type>
         </dependency>
     </dependencies>
@@ -28,17 +28,17 @@
             <plugin>
                 <groupId>org.codehaus.cargo</groupId>
                 <artifactId>cargo-maven2-plugin</artifactId>
-                <version>${cargo.version}</version>
+                <version>${cargoVersion}</version>
                 <dependencies>
                     <dependency>
                         <groupId>org.mule.tools.cargo</groupId>
                         <artifactId>container</artifactId>
-                        <version>${version}</version>
+                        <version>${project.version}</version>
                     </dependency>
                     <dependency>
                         <groupId>org.mule.modules</groupId>
                         <artifactId>mule-module-cxf</artifactId>
-                        <version>${mule.version}</version>
+                        <version>${muleVersion}</version>
                     </dependency>
                 </dependencies>
                 <configuration>
