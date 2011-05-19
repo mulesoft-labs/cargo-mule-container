@@ -12,6 +12,7 @@ import org.codehaus.cargo.container.spi.configuration.AbstractStandaloneLocalCon
  */
 public class IONConfiguration extends AbstractRuntimeConfiguration {
 
+    private static final String ION_URL_PROPERTY = "url";
     private static final String DOMAIN_PROPERTY = "domain";
     private static final String USERNAME_PROPERTY = "username";
     private static final String PASSWORD_PROPERTY = "password";
@@ -29,6 +30,10 @@ public class IONConfiguration extends AbstractRuntimeConfiguration {
             }
 
         };
+    }
+
+    public final String getIONURL() {
+        return getPropertyValue(IONConfiguration.ION_URL_PROPERTY);
     }
 
     public final String getDomain() {

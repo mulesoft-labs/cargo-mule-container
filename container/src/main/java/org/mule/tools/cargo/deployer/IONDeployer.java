@@ -26,8 +26,7 @@ import org.mule.tools.cargo.container.configuration.IONConfiguration;
  */
 public class IONDeployer extends AbstractDeployer {
 
-    private static final String ION_RESOURCE = "https://muleion.com/api/";
-    private static final String ION_APPLICATIONS_RESOURCE = IONDeployer.ION_RESOURCE+"applications/";
+    private static final String DEFAULT_ION_URL = "https://muleion.com/";
     private final IONContainer container;
     private final Client client;
     private long maxWaitTime = IONDeployer.DEFAULT_MAX_WAIT_TIME;
@@ -53,8 +52,20 @@ public class IONDeployer extends AbstractDeployer {
         return DeployerType.REMOTE;
     }
 
+    protected final String getIONURL() {
+        final String ionURL = this.container.getConfiguration().getIONURL();
+        if (ionURL == null) {
+            return IONDeployer.DEFAULT_ION_URL;
+        }
+        return ionURL;
+    }
+
+    protected final String getIONApplicationsResource() {
+        return getIONURL()+"api/applications/";
+    }
+
     protected final WebResource.Builder createBuilder(final String path) {
-        final WebResource webResource = this.client.resource(IONDeployer.ION_APPLICATIONS_RESOURCE);
+        final WebResource webResource = this.client.resource(getIONApplicationsResource());
         return webResource.path(path).header(HttpHeaders.AUTHORIZATION, "Basic "+ new String(Base64.encode(getConfiguration().getUserName()+":"+getConfiguration().getPassword()), Charset.forName("ASCII")));
     }
 
