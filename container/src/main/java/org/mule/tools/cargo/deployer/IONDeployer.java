@@ -26,7 +26,7 @@ import org.mule.tools.cargo.container.configuration.IONConfiguration;
  */
 public class IONDeployer extends AbstractDeployer {
 
-    private static final String ION_RESOURCE = "http://muleion.com/api/";
+    private static final String ION_RESOURCE = "https://muleion.com/api/";
     private static final String ION_APPLICATIONS_RESOURCE = IONDeployer.ION_RESOURCE+"applications/";
     private final IONContainer container;
     private final Client client;
