@@ -1,5 +1,6 @@
 package org.mule.tools.cargo.deployer;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -62,8 +63,11 @@ public class Application {
     private String fullDomain;
     private Status status;
     private boolean hasFile;
+    private String filename;
+    private Date lastUpdateTime;
     private int workers;
     private int maxWorkers;
+    private int remainingWorkerCount;
     private List<WorkerStatus> workerStatuses;
 
     public String getDescription() {
@@ -106,6 +110,22 @@ public class Application {
         this.hasFile = hasFile;
     }
 
+    public String getFilename() {
+        return this.filename;
+    }
+
+    public void setFilename(final String filename) {
+        this.filename = filename;
+    }
+
+    public Date getLastUpdateTime() {
+        return this.lastUpdateTime;
+    }
+
+    public void setLastUpdateTime(final Date lastUpdateTime) {
+        this.lastUpdateTime = lastUpdateTime;
+    }
+
     public int getWorkers() {
         return this.workers;
     }
@@ -120,6 +140,14 @@ public class Application {
 
     public void setMaxWorkers(final int maxWorkers) {
         this.maxWorkers = maxWorkers;
+    }
+
+    public int getRemainingWorkerCount() {
+        return this.remainingWorkerCount;
+    }
+
+    public void setRemainingWorkerCount(final int remainingWorkerCount) {
+        this.remainingWorkerCount = remainingWorkerCount;
     }
 
     public List<WorkerStatus> getWorkerStatuses() {
