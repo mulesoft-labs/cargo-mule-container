@@ -1,7 +1,5 @@
 package org.mule.tools.cargo.container;
 
-import org.codehaus.cargo.container.deployable.DeployableType;
-import org.mule.tools.cargo.deployable.MuleApplicationDeployable;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -17,7 +15,7 @@ import org.codehaus.cargo.container.configuration.LocalConfiguration;
 import org.codehaus.cargo.container.deployable.Deployable;
 import org.codehaus.cargo.container.spi.AbstractEmbeddedLocalContainer;
 import org.mule.MuleServer;
-import org.mule.tools.cargo.deployable.MuleConfigurationDeployable;
+import org.mule.tools.cargo.deployable.MuleApplicationDeployable;
 
 /**
  * Start an embedded {@link MuleServer} using maven dependencies.
@@ -47,13 +45,7 @@ public class Mule3xEmbeddedLocalContainer extends AbstractEmbeddedLocalContainer
 
     @Override
     public final ContainerCapability getCapability() {
-        return new MuleContainerCapability() {
-            @Override
-            public boolean supportsDeployableType(final DeployableType type) {
-                return MuleConfigurationDeployable.getDeployableType().equals(type)
-                    || super.supportsDeployableType(type);
-            }
-        };
+        return new MuleContainerCapability();
     }
 
     protected final MuleServer getServer() {

@@ -27,7 +27,6 @@ Configuration
 * Mule Application Unit deployable
 
  Cargo main deployable metaphor is encapsulated as org.mule.tools.cargo.deployable.MuleApplicationDeployable. This implementation which encapsulates Mule application is usable with all container types.
- Alternatively embedded container supports simple configuration files encapsulated as org.mule.tools.cargo.deployable.MuleConfigurationDeployable.
 
 * Mule 3x Container
 
