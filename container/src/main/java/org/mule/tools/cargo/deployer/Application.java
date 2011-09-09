@@ -66,7 +66,6 @@ public class Application {
     private String filename;
     private Date lastUpdateTime;
     private int workers;
-    private int maxWorkers;
     private int remainingWorkerCount;
     private List<WorkerStatus> workerStatuses;
 
@@ -132,14 +131,6 @@ public class Application {
 
     public void setWorkers(final int workers) {
         this.workers = workers;
-    }
-
-    public int getMaxWorkers() {
-        return this.maxWorkers;
-    }
-
-    public void setMaxWorkers(final int maxWorkers) {
-        this.maxWorkers = maxWorkers;
     }
 
     public int getRemainingWorkerCount() {

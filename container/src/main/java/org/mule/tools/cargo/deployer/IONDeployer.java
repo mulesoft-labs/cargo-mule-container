@@ -10,6 +10,7 @@ import com.sun.jersey.api.json.JSONConfiguration;
 import com.sun.jersey.core.util.Base64;
 import java.io.File;
 import java.nio.charset.Charset;
+import java.util.Map;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
@@ -87,9 +88,10 @@ public class IONDeployer extends AbstractDeployer {
     }
 
     protected final void updateIONApplication(final String domain, final Application application) {
-        final ClientResponse.Status status = createBuilder(domain).type(MediaType.APPLICATION_JSON_TYPE).put(ClientResponse.class, application).getClientResponseStatus();
+        final ClientResponse response = createBuilder(domain).type(MediaType.APPLICATION_JSON_TYPE).put(ClientResponse.class, application);
+        final ClientResponse.Status status = response.getClientResponseStatus();
         if (!(status == ClientResponse.Status.OK || status == ClientResponse.Status.CREATED)) {
-            throw new DeployableException("Failed to update <"+domain+">: "+status.getStatusCode()+"("+status.getReasonPhrase()+")");
+            throw new DeployableException("Failed to update <"+domain+">: "+status.getStatusCode()+"("+status.getReasonPhrase()+"): "+extractFailureReason(response));
         }
     }
 
@@ -101,6 +103,18 @@ public class IONDeployer extends AbstractDeployer {
         if (!isIONApplicationCreated(domain)) {
             throw new DeployableException("iON Application <"+domain+"> does not exit on <"+getConfiguration().getIONURL()+">");
         }
+    }
+
+    protected final String extractFailureReason(final ClientResponse response) {
+        if (response.getType() != null && response.getType().isCompatible(MediaType.APPLICATION_JSON_TYPE)) {
+            return response.getEntity(Map.class).get("message").toString();
+        } else {
+            return response.getEntity(String.class);
+        }
+    }
+
+    protected void sleep() {
+
     }
 
     @Override
