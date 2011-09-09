@@ -105,7 +105,7 @@ public class IONDeployer extends AbstractDeployer {
 
     @Override
     public void deploy(final Deployable deployable) {
-        final String domain = getConfiguration().getApplication();
+        final String domain = getConfiguration().getDomain();
         ensureIONApplicationExists(domain);
 
         getLogger().info("Deploying <"+deployable.getFile()+">", IONDeployer.LOG_DEPLOY_CATEGORY);
@@ -141,7 +141,7 @@ public class IONDeployer extends AbstractDeployer {
         while (System.currentTimeMillis() - before < this.maxWaitTime) {
             switch (getIONApplication(domain).getStatus()) {
                 case DEPLOY_FAILED:
-                    throw new DeployableException("Failed to deploy <"+getConfiguration().getApplication()+">");
+                    throw new DeployableException("Failed to deploy <"+deployable.getFile()+"> on <"+getConfiguration().getDomain()+">");
                 case STARTED:
                     return;
             }
@@ -153,12 +153,12 @@ public class IONDeployer extends AbstractDeployer {
                 break;
             }
         }
-        throw new DeployableException("Waited on <"+getConfiguration().getApplication()+"> deployment for <"+this.maxWaitTime+"> ms");
+        throw new DeployableException("Waited on <"+getConfiguration().getDomain()+"> deployment for <"+this.maxWaitTime+"> ms");
     }
 
     @Override
     public void undeploy(final Deployable deployable) {
-        final String domain = getConfiguration().getApplication();
+        final String domain = getConfiguration().getDomain();
         ensureIONApplicationExists(domain);
 
         final Application application = getIONApplication(domain);
@@ -185,7 +185,7 @@ public class IONDeployer extends AbstractDeployer {
                 break;
             }
         }
-        throw new DeployableException("Waited on <"+getConfiguration().getApplication()+"> undeployment for <"+this.maxWaitTime+"> ms");
+        throw new DeployableException("Waited on <"+getConfiguration().getDomain()+"> undeployment for <"+this.maxWaitTime+"> ms");
     }
 
 }
