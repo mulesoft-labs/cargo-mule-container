@@ -60,13 +60,8 @@ public class Mule3xEmbeddedLocalContainer extends AbstractEmbeddedLocalContainer
         return this.server;
     }
 
-    protected final void startServer(final String config) {
-        final MuleServer muleServer;
-        if (config == null) {
-            muleServer = new MuleServer();
-        } else {
-            muleServer = new MuleServer(config);
-        }
+    protected final void startServer() {
+        final MuleServer muleServer = new MuleServer();
         muleServer.start(false, false);
         this.server = muleServer;
     }
@@ -98,27 +93,23 @@ public class Mule3xEmbeddedLocalContainer extends AbstractEmbeddedLocalContainer
 
     @Override
     protected void doStart() throws Exception {
+        final Deployable deployable = getDeployable();
+        if (!(deployable instanceof MuleApplicationDeployable)) {
+            throw new IllegalArgumentException("Only supports "+MuleApplicationDeployable.class.getSimpleName());
+        }
+
         configureLog4j();
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         try {
-            final Deployable deployable = getDeployable();
-            if (deployable instanceof MuleApplicationDeployable) {
-                final MuleApplicationDeployable muleApplicationDeployable = (MuleApplicationDeployable) deployable;
-                final URLClassLoader applicationClassLoader = URLClassLoader.newInstance(new URL[]{
-                    new File(muleApplicationDeployable.getFile()).toURI().toURL(),
-                    //TODO Add support for embedded lib directory
-                    new URL("jar:file:"+muleApplicationDeployable.getFile()+"!/classes/")
-                }, getClassLoader());
-                Thread.currentThread().setContextClassLoader(applicationClassLoader);
+            final MuleApplicationDeployable muleApplicationDeployable = (MuleApplicationDeployable) deployable;
+            final URLClassLoader applicationClassLoader = URLClassLoader.newInstance(new URL[]{
+                new File(muleApplicationDeployable.getFile()).toURI().toURL(),
+                //TODO Add support for embedded lib directory
+                new URL("jar:file:"+muleApplicationDeployable.getFile()+"!/classes/")
+            }, getClassLoader());
+            Thread.currentThread().setContextClassLoader(applicationClassLoader);
 
-                startServer(null);
-            } else {
-                final MuleConfigurationDeployable muleConfigurationDeployable = (MuleConfigurationDeployable) deployable;
-
-                Thread.currentThread().setContextClassLoader(getClassLoader());
-
-                startServer(muleConfigurationDeployable.getFile());
-            }
+            startServer();
         } finally {
             Thread.currentThread().setContextClassLoader(classLoader);
         }

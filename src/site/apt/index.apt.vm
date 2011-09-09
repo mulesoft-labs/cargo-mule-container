@@ -97,51 +97,6 @@ Configuration
   ...
 +--
 
- Or using a simple mule-config.xml:
-
-+--
-...
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.cargo</groupId>
-        <artifactId>cargo-maven2-plugin</artifactId>
-        <version>${cargoVersion}</version>
-        <dependencies>
-          <dependency>
-            <groupId>org.mule.tools.cargo</groupId>
-            <artifactId>container</artifactId>
-            <version>${project.version}</version>
-          </dependency>
-          <dependency>
-            <groupId>org.mule.modules</groupId>
-            <artifactId>mule-module-cxf</artifactId>
-            <version>${muleVersion}</version>
-          </dependency>
-        </dependencies>
-        <configuration>
-          <wait>false</wait>
-          <container>
-            <containerId>mule3x</containerId>
-            <implementation>org.mule.tools.cargo.container.Mule3xEmbeddedLocalContainer</implementation>
-            <type>embedded</type>
-          </container>
-          <configuration>
-            <implementation>org.mule.tools.cargo.container.configuration.Mule3xLocalConfiguration</implementation>
-            <deployables>
-              <deployable>
-                <implementation>org.mule.tools.cargo.deployable.MuleConfigurationDeployable</implementation>
-                <location>/path/to/your/mule-config.xml</location>
-              </deployable>
-            </deployables>
-          </configuration>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-  ...
-+--
-
 ** Installed Container
 
  Allows to start a container using a local Mule installation.
