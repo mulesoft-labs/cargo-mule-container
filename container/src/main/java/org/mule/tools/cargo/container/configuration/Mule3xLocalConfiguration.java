@@ -9,6 +9,9 @@ import org.codehaus.cargo.container.configuration.ConfigurationType;
 import org.codehaus.cargo.container.spi.configuration.AbstractConfigurationCapability;
 import org.codehaus.cargo.container.spi.configuration.AbstractLocalConfiguration;
 
+/**
+ * Encapsulates Mule 3.x specific configuration details.
+ */
 public class Mule3xLocalConfiguration extends AbstractLocalConfiguration {
 
     public Mule3xLocalConfiguration(final String home) {
@@ -24,8 +27,7 @@ public class Mule3xLocalConfiguration extends AbstractLocalConfiguration {
         return new AbstractConfigurationCapability() {
             @Override
             protected Map<String, Boolean> getPropertySupportMap() {
-                final Map<String, Boolean> propertySupportMap = new HashMap<String, Boolean>();
-                return propertySupportMap;
+                return new HashMap<String, Boolean>();
             }
         };
     }

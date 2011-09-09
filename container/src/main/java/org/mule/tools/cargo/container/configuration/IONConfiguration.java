@@ -22,13 +22,10 @@ public class IONConfiguration extends AbstractRuntimeConfiguration {
     @Override
     public ConfigurationCapability getCapability() {
         return new AbstractStandaloneLocalConfigurationCapability() {
-
             @Override
             protected Map<String, Boolean> getPropertySupportMap() {
-                final Map<String, Boolean> propertySupportMap = new HashMap<String, Boolean>();
-                return propertySupportMap;
+                return new HashMap<String, Boolean>();
             }
-
         };
     }
 
