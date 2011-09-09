@@ -22,7 +22,7 @@ import org.mule.tools.cargo.container.IONContainer;
 import org.mule.tools.cargo.container.configuration.IONConfiguration;
 
 /**
- * Deploy {@link MuleApplicationDeployable} to a existing Mule iON domain using REST API (http://www.mulesoft.org/documentation/display/ION/API).
+ * Deploy {@link MuleApplicationDeployable} to a Mule iON domain using REST API (http://www.mulesoft.org/documentation/display/ION/API).
  */
 public class IONDeployer extends AbstractDeployer {
 
@@ -53,7 +53,7 @@ public class IONDeployer extends AbstractDeployer {
     }
 
     protected final String getIONURL() {
-        final String ionURL = this.container.getConfiguration().getIONURL();
+        final String ionURL = getConfiguration().getIONURL();
         if (ionURL == null) {
             return IONDeployer.DEFAULT_ION_URL;
         }
@@ -99,13 +99,13 @@ public class IONDeployer extends AbstractDeployer {
      */
     protected final void ensureIONApplicationExists(final String domain) {
         if (!isIONApplicationCreated(domain)) {
-            throw new DeployableException("iON Application <"+domain+"> does not exit");
+            throw new DeployableException("iON Application <"+domain+"> does not exit on <"+getConfiguration().getIONURL()+">");
         }
     }
 
     @Override
     public void deploy(final Deployable deployable) {
-        final String domain = getConfiguration().getDomain();
+        final String domain = getConfiguration().getApplication();
         ensureIONApplicationExists(domain);
 
         getLogger().info("Deploying <"+deployable.getFile()+">", IONDeployer.LOG_DEPLOY_CATEGORY);
@@ -114,6 +114,7 @@ public class IONDeployer extends AbstractDeployer {
         switch (application.getStatus()) {
             case STARTED:
             case UNDEPLOYED:
+            case DEPLOY_FAILED:
                 final ClientResponse.Status status = createBuilder(domain+"/deploy").type(MediaType.APPLICATION_OCTET_STREAM_TYPE).post(ClientResponse.class, new File(deployable.getFile())).getClientResponseStatus();
                 if (status != ClientResponse.Status.OK) {
                     throw new DeployableException("Failed to deploy <"+domain+">: "+status.getStatusCode()+"("+status.getReasonPhrase()+")");
@@ -138,8 +139,11 @@ public class IONDeployer extends AbstractDeployer {
 
         final long before = System.currentTimeMillis();
         while (System.currentTimeMillis() - before < this.maxWaitTime) {
-            if (getIONApplication(domain).getStatus() == Application.Status.STARTED) {
-                return;
+            switch (getIONApplication(domain).getStatus()) {
+                case DEPLOY_FAILED:
+                    throw new DeployableException("Failed to deploy <"+getConfiguration().getApplication()+">");
+                case STARTED:
+                    return;
             }
 
             try {
@@ -149,12 +153,12 @@ public class IONDeployer extends AbstractDeployer {
                 break;
             }
         }
-        throw new DeployableException("Waited on <"+getConfiguration().getDomain()+"> deployment for <"+this.maxWaitTime+"> ms");
+        throw new DeployableException("Waited on <"+getConfiguration().getApplication()+"> deployment for <"+this.maxWaitTime+"> ms");
     }
 
     @Override
     public void undeploy(final Deployable deployable) {
-        final String domain = getConfiguration().getDomain();
+        final String domain = getConfiguration().getApplication();
         ensureIONApplicationExists(domain);
 
         final Application application = getIONApplication(domain);
@@ -181,7 +185,7 @@ public class IONDeployer extends AbstractDeployer {
                 break;
             }
         }
-        throw new DeployableException("Waited on <"+getConfiguration().getDomain()+"> undeployment for <"+this.maxWaitTime+"> ms");
+        throw new DeployableException("Waited on <"+getConfiguration().getApplication()+"> undeployment for <"+this.maxWaitTime+"> ms");
     }
 
 }
