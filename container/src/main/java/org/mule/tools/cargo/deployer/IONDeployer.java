@@ -36,6 +36,8 @@ public class IONDeployer extends AbstractDeployer {
     private static final String LOG_UNDEPLOY_CATEGORY = "ion:undeploy";
 
     public IONDeployer(final RemoteContainer container) {
+        super(container);
+
         if (!(container instanceof IONContainer)) {
             throw new IllegalArgumentException("Only accept "+IONContainer.class.getSimpleName());
         }
