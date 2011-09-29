@@ -1,14 +1,31 @@
 Introduction
 
  This project provides a {{{http://cargo.codehaus.org/}Cargo}} implementation for {{{http://www.mulesoft.org}Mule}} container.
+ Documentation will focus on {{{http://maven.apache.org/}Maven}} integration. Find more details on other integration on {{{http://cargo.codehaus.org/}Cargo}} website.
 
-Setup
+* Configuration
 
  To use cargo-mule-container you will need to:
- * define mulesoft.org release repository
- * add cargo-mule-container as a dependency to cargo
 
- Defining mulesoft.org release repository:
+ [[1]] define mulesoft.org release repository
+
+ [[2]] add cargo as a dependency to your project
+
+ [[3]] add cargo-mule-container as a dependency to cargo
+
+ [[3]] define specific container you want to use
+
+ [[5]] define applications you want to deploy
+
+ [[6]] bind cargo start/stop goals to a Maven phase to start/stop a mule instance (optional)
+
+ [[7]] bind cargo deploy/undeploy goals to a Maven phase to deploy/undeploy your applications
+
+ [[8]] use maven-failsafe plugin to run tests on your deployed applications (optional)
+
+** Define mulesoft.org release repository
+
+ Update your pom to contain:
 
 +--
 ...
@@ -22,34 +39,9 @@ Setup
 ...
 +--
 
-Configuration
+** Add cargo and cargo-mule-container as a dependency
 
-* Mule Application Unit deployable
-
- Cargo main deployable metaphor is encapsulated as org.mule.tools.cargo.deployable.MuleApplicationDeployable. This implementation which encapsulates Mule application is usable with all container types.
-
-* Mule 3x Container
-
- This plugin provides 3 different implementations of Cargo container: Embedded, Installed and iON.
-
-** Embedded Container
-
- Allows to start a MuleServer using classpath from provided dependencies.
- This container implementation supports a single deployable and no deployer implementation can be used.
-
- When using this container you will need to provide:
-
-    * mule dependency definitions
-
-    * your application dependencies (if deploying an application)
-
- This container is implemented by org.mule.tools.cargo.container.Mule3xEmbeddedLocalContainer class and must be used with associated:
-
-    * local configuration (org.mule.tools.cargo.container.configuration.Mule3xLocalConfiguration)
-
-    * deployable type (either org.mule.tools.cargo.deployable.MuleApplicationDeployable or org.mule.tools.cargo.deployable.MuleConfigurationDeployable)
-
- Example using a mule application:
+ Update your pom to list cargo as a dependency:
 
 +--
 ...
@@ -65,18 +57,64 @@ Configuration
             <artifactId>container</artifactId>
             <version>${project.version}</version>
           </dependency>
-          <dependency>
-            <groupId>org.mule.modules</groupId>
-            <artifactId>mule-module-cxf</artifactId>
-            <version>${muleVersion}</version>
-          </dependency>
+      </plugin>
+    </plugins>
+  </build>
+...
++--
+
+ Depending on your deployment options you may need to add other dependencies. See section 'Use cases'.
+
+** Container definition
+
+ Update your pom to define your container:
+
++--
+...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.cargo</groupId>
+        <artifactId>cargo-maven2-plugin</artifactId>
+        <version>${cargoVersion}</version>
+        <dependencies>
+          ...
         </dependencies>
         <configuration>
           <wait>false</wait>
           <container>
             <containerId>mule3x</containerId>
-            <implementation>org.mule.tools.cargo.container.Mule3xEmbeddedLocalContainer</implementation>
-            <type>embedded</type>
+            <implementation>org.mule.tools.cargo.container.Mule3xInstalledLocalContainer</implementation>
+            <home>/Path/To/Mule</home>
+          </container>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  ...
++--
+
+ See section 'Use cases' for available containers.
+
+** Applications definition
+
+ Update your pom to list your deployed applications:
+
++--
+...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.cargo</groupId>
+        <artifactId>cargo-maven2-plugin</artifactId>
+        <version>${cargoVersion}</version>
+        <dependencies>
+          ...
+        </dependencies>
+        <configuration>
+          <wait>false</wait>
+          <container>
+            ...
           </container>
           <configuration>
             <implementation>org.mule.tools.cargo.container.configuration.Mule3xLocalConfiguration</implementation>
@@ -96,7 +134,183 @@ Configuration
   ...
 +--
 
-** Installed Container
+ You can also deploy application defined by current project:
+
++--
+...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.cargo</groupId>
+        <artifactId>cargo-maven2-plugin</artifactId>
+        <version>${cargoVersion}</version>
+        <dependencies>
+          ...
+        </dependencies>
+        <configuration>
+          <wait>false</wait>
+          <container>
+            ...
+          </container>
+          <configuration>
+            <implementation>org.mule.tools.cargo.container.configuration.Mule3xLocalConfiguration</implementation>
+            <deployables>
+              <deployable>
+                <implementation>org.mule.tools.cargo.deployable.MuleApplicationDeployable</implementation>
+              </deployable>
+            </deployables>
+          </configuration>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  ...
++--
+
+** Bind container start/stop
+
+ Update your pom to start/stop mule:
+
++--
+...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.cargo</groupId>
+        <artifactId>cargo-maven2-plugin</artifactId>
+        ...
+        <executions>
+          <execution>
+            <id>start-container</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>start</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>stop-container</id>
+            <phase>post-integration-test</phase>
+            <goals>
+              <goal>stop</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+...
++--
+
+** Bind applications deployment
+
+ Update your pom to deploy/undeploy applications:
+
++--
+...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.cargo</groupId>
+        <artifactId>cargo-maven2-plugin</artifactId>
+        ...
+        <executions>
+          <execution>
+            <id>start-container</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>deploy</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>stop-container</id>
+            <phase>post-integration-test</phase>
+            <goals>
+              <goal>undeploy</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+...
++--
+
+ If you need to start/stop a container to deploy your applications last two steps can be combined:
+
++--
+...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.cargo</groupId>
+        <artifactId>cargo-maven2-plugin</artifactId>
+        ...
+        <executions>
+          <execution>
+            <id>start-container</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>start</goal>
+              <goal>deploy</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>stop-container</id>
+            <phase>post-integration-test</phase>
+            <goals>
+              <goal>undeploy</goal>
+              <goal>stop</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+...
++--
+
+** Run integration tests
+
+ Update your pom to run integration tests:
+
++--
+...
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+...
++--
+
+ If you follow all those steps then running `mvn post-integration-test` you will see:
+
+ [[1]] mule container being started
+
+ [[2]] applications being deployed
+
+ [[3]] tests being run
+
+ [[3]] applications being undeployed
+
+ [[5]] mule container being stopped
+
+
+* Use cases
+
+ Bellow are sample configurations detailing how to deploy echo example on all 3 containers.
+
+** Deploy echo example in an installed mule instance (mule installation required)
 
  Allows to start a container using a local Mule installation.
  This container implementation does not support deployable and file deployer implementation can be used.
@@ -229,7 +443,71 @@ Configuration
 ...
 +--
 
-* iON Container
+** Deploy echo example in an embedded Container (no mule installation required)
+
+ Allows to start a MuleServer using classpath from provided dependencies.
+ This container implementation supports a single deployable and no deployer implementation can be used.
+
+ When using this container you will need to provide:
+
+    * mule dependency definitions
+
+    * your application dependencies (if deploying an application)
+
+ This container is implemented by org.mule.tools.cargo.container.Mule3xEmbeddedLocalContainer class and must be used with associated:
+
+    * local configuration (org.mule.tools.cargo.container.configuration.Mule3xLocalConfiguration)
+
+    * deployable type (either org.mule.tools.cargo.deployable.MuleApplicationDeployable or org.mule.tools.cargo.deployable.MuleConfigurationDeployable)
+
+ Example using a mule application:
+
++--
+...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.cargo</groupId>
+        <artifactId>cargo-maven2-plugin</artifactId>
+        <version>${cargoVersion}</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.mule.tools.cargo</groupId>
+            <artifactId>container</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.mule.modules</groupId>
+            <artifactId>mule-module-cxf</artifactId>
+            <version>${muleVersion}</version>
+          </dependency>
+        </dependencies>
+        <configuration>
+          <wait>false</wait>
+          <container>
+            <containerId>mule3x</containerId>
+            <implementation>org.mule.tools.cargo.container.Mule3xEmbeddedLocalContainer</implementation>
+            <type>embedded</type>
+          </container>
+          <configuration>
+            <implementation>org.mule.tools.cargo.container.configuration.Mule3xLocalConfiguration</implementation>
+            <deployables>
+              <deployable>
+                <implementation>org.mule.tools.cargo.deployable.MuleApplicationDeployable</implementation>
+                <groupId>org.mule.examples</groupId>
+                <artifactId>mule-example-echo</artifactId>
+                <type>zip</type>
+              </deployable>
+            </deployables>
+          </configuration>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  ...
++--
+
+** Deploy echo example on Mule iON
 
  Allows to connect to your iON domain.
  This container implementation does not support deployable and only iON deployer implementation can be used.
@@ -291,41 +569,6 @@ Configuration
             </deployables>
           </deployer>
         </configuration>
-      </plugin>
-    </plugins>
-  </build>
-...
-+--
-
-* Lifecycle binding
-
- Cargo can be configured to be automatically started/stopped during the integration-test maven lifecycle through the binding concept.
- Using following configuration associated maven container will be started before the integration phase and stopped after.
-
-+--
-...
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.cargo</groupId>
-        <artifactId>cargo-maven2-plugin</artifactId>
-        ...
-        <executions>
-          <execution>
-            <id>start-container</id>
-            <phase>pre-integration-test</phase>
-            <goals>
-              <goal>start</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>stop-container</id>
-            <phase>post-integration-test</phase>
-            <goals>
-              <goal>stop</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
