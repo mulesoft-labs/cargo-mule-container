@@ -76,6 +76,21 @@ public class FileDeployer extends AbstractInstalledLocalDeployer {
     }
 
     /**
+     * @param deployable
+     * @return {@link File} pointing to application
+     */
+    protected final File extractSourceFile(final Deployable deployable) {
+        final String fileName = deployable.getFile();
+        final String normalizedFileName;
+        if (fileName.endsWith(".mule")) {
+            normalizedFileName = fileName.replace(".mule", ".zip");
+        } else {
+            normalizedFileName = fileName;
+        }
+        return new File(normalizedFileName);
+    }
+
+    /**
      * Wait up to timeout before anchor is discovered (using {@link File#exists()}).
      * @param file
      * @param timeout
@@ -104,7 +119,7 @@ public class FileDeployer extends AbstractInstalledLocalDeployer {
         ensureMuleApplication(deployable);
 
         final File appsFolder = getAppsFolder();
-        final File sourceFile = new File(deployable.getFile());
+        final File sourceFile = extractSourceFile(deployable);
         final File destinationFile = new File(appsFolder, sourceFile.getName());
 
         final String applicationName = extractName(deployable);
