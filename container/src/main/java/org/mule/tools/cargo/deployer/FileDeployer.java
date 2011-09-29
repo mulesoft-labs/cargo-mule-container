@@ -66,12 +66,21 @@ public class FileDeployer extends AbstractInstalledLocalDeployer {
         return new File(getAppsFolder(), extractName(deployable));
     }
 
+    protected final String normalizeName(final Deployable deployable) {
+        final String fileName = deployable.getFile();
+        if (fileName.endsWith(".mule")) {
+            return fileName.replace(".mule", ".zip");
+        } else {
+            return fileName;
+        }
+    }
+
     /**
      * @param deployable
      * @return application name from {@link Deployable#getFile()}
      */
     protected final String extractName(final Deployable deployable) {
-        final String fileName = deployable.getFile();
+        final String fileName = normalizeName(deployable);
         return fileName.substring(fileName.lastIndexOf(File.separator)+1, fileName.length()-4);
     }
 
@@ -80,14 +89,7 @@ public class FileDeployer extends AbstractInstalledLocalDeployer {
      * @return {@link File} pointing to application
      */
     protected final File extractSourceFile(final Deployable deployable) {
-        final String fileName = deployable.getFile();
-        final String normalizedFileName;
-        if (fileName.endsWith(".mule")) {
-            normalizedFileName = fileName.replace(".mule", ".zip");
-        } else {
-            normalizedFileName = fileName;
-        }
-        return new File(normalizedFileName);
+        return new File(normalizeName(deployable));
     }
 
     /**
