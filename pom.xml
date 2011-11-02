@@ -131,10 +131,6 @@
             <url>https://repository.mulesoft.org/snapshots/</url>
             <uniqueVersion>false</uniqueVersion>
         </snapshotRepository>
-        <site>
-            <id>gh-pages</id>
-            <url>file://${gh-pages-dir}</url>
-        </site>
     </distributionManagement>
 
     <reporting>
