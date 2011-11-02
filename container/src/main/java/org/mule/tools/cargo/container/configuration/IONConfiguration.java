@@ -1,11 +1,8 @@
 package org.mule.tools.cargo.container.configuration;
 
-import java.util.HashMap;
-import java.util.Map;
 
 import org.codehaus.cargo.container.configuration.ConfigurationCapability;
 import org.codehaus.cargo.container.spi.configuration.AbstractRuntimeConfiguration;
-import org.codehaus.cargo.container.spi.configuration.AbstractStandaloneLocalConfigurationCapability;
 
 /**
  * Encapsulates iON specific configuration details.
@@ -18,15 +15,12 @@ public class IONConfiguration extends AbstractRuntimeConfiguration {
     private static final String PASSWORD_PROPERTY = "password";
     private static final String WORKERS_PROPERTY = "workers";
     private static final int WORKERS_DEFAULT = 1;
+    private static final String MULE_VERSION = "muleVersion";
+    private static final String MULE_VERSION_DEFAULT = "3.2.0";
 
     @Override
     public ConfigurationCapability getCapability() {
-        return new AbstractStandaloneLocalConfigurationCapability() {
-            @Override
-            protected Map<String, Boolean> getPropertySupportMap() {
-                return new HashMap<String, Boolean>();
-            }
-        };
+        return new MuleConfigurationCapability();
     }
 
     public final String getIONURL() {
@@ -57,15 +51,13 @@ public class IONConfiguration extends AbstractRuntimeConfiguration {
         return workers;
     }
 
-    /*@Override
-    public Map<String, String> getProperties() {
-        final Map<String, String> properties = new HashMap<String, String>(super.getProperties());
-        properties.remove(IONConfiguration.DOMAIN_PROPERTY);
-        properties.remove(IONConfiguration.USERNAME_PROPERTY);
-        properties.remove(IONConfiguration.PASSWORD_PROPERTY);
-        properties.remove(IONConfiguration.WORKERS_PROPERTY);
-        return properties;
-    }*/
+    public final String getMuleVersion() {
+        final String muleVersion = getPropertyValue(IONConfiguration.MULE_VERSION);
+        if (muleVersion == null) {
+            return IONConfiguration.MULE_VERSION_DEFAULT;
+        }
+        return muleVersion;
+    }
 
     protected final void ensurePropertyProvided(final String property) {
         if (getPropertyValue(property) == null) {

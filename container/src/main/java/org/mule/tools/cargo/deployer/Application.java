@@ -68,6 +68,8 @@ public class Application {
     private int workers;
     private int remainingWorkerCount;
     private List<WorkerStatus> workerStatuses;
+    private String muleVersion;
+    private List<String> supportedVersions;
 
     public String getDescription() {
         return this.description;
@@ -147,6 +149,22 @@ public class Application {
 
     public void setWorkerStatuses(final List<WorkerStatus> workerStatuses) {
         this.workerStatuses = workerStatuses;
+    }
+
+    public String getMuleVersion() {
+        return this.muleVersion;
+    }
+
+    public void setMuleVersion(final String muleVersion) {
+        this.muleVersion = muleVersion;
+    }
+
+    public List<String> getSupportedVersions() {
+        return this.supportedVersions;
+    }
+
+    public void setSupportedVersions(final List<String> supportedVersions) {
+        this.supportedVersions = supportedVersions;
     }
 
 }

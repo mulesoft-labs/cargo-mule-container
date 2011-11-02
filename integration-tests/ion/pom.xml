@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.mule.tools.cargo</groupId>
         <artifactId>integration-tests</artifactId>
-        <version>0.9.5-SNAPSHOT</version>
+        <version>0.9.8-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -16,7 +16,7 @@
         <dependency>
             <groupId>org.mule.examples</groupId>
             <artifactId>mule-example-echo</artifactId>
-            <version>3.1.2</version>
+            <version>${muleVersion}</version>
             <type>zip</type>
         </dependency>
     </dependencies>
@@ -40,11 +40,9 @@
                     <wait>false</wait>
                     <container>
                         <containerId>ion</containerId>
-                        <implementation>org.mule.tools.cargo.container.IONContainer</implementation>
                         <type>remote</type>
                     </container>
                     <configuration>
-                        <implementation>org.mule.tools.cargo.container.configuration.IONConfiguration</implementation>
                         <type>runtime</type>
                         <properties>
                             <domain>${ion.domain}</domain>
@@ -54,11 +52,9 @@
                         </properties>
                     </configuration>
                     <deployer>
-                        <implementation>org.mule.tools.cargo.deployer.IONDeployer</implementation>
                         <type>remote</type>
                         <deployables>
                             <deployable>
-                                <implementation>org.mule.tools.cargo.deployable.MuleApplicationDeployable</implementation>
                                 <groupId>org.mule.examples</groupId>
                                 <artifactId>mule-example-echo</artifactId>
                                 <type>zip</type>

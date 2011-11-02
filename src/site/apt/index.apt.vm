@@ -84,7 +84,6 @@ Introduction
           <wait>false</wait>
           <container>
             <containerId>mule3x</containerId>
-            <implementation>org.mule.tools.cargo.container.Mule3xInstalledLocalContainer</implementation>
             <home>/Path/To/Mule</home>
           </container>
         </configuration>
@@ -117,10 +116,8 @@ Introduction
             ...
           </container>
           <configuration>
-            <implementation>org.mule.tools.cargo.container.configuration.Mule3xLocalConfiguration</implementation>
             <deployables>
               <deployable>
-                <implementation>org.mule.tools.cargo.deployable.MuleApplicationDeployable</implementation>
                 <groupId>org.mule.examples</groupId>
                 <artifactId>mule-example-echo</artifactId>
                 <type>zip</type>
@@ -152,14 +149,9 @@ Introduction
           <container>
             ...
           </container>
-          <configuration>
-            <implementation>org.mule.tools.cargo.container.configuration.Mule3xLocalConfiguration</implementation>
-            <deployables>
-              <deployable>
-                <implementation>org.mule.tools.cargo.deployable.MuleApplicationDeployable</implementation>
-              </deployable>
-            </deployables>
-          </configuration>
+          <deployer>
+            <type>installed</type>
+          </deployer>
         </configuration>
       </plugin>
     </plugins>
@@ -346,18 +338,12 @@ Introduction
           <wait>false</wait>
           <container>
             <containerId>mule3x</containerId>
-            <implementation>org.mule.tools.cargo.container.Mule3xInstalledLocalContainer</implementation>
             <home>/path/to/your/mule/home</home>
           </container>
-          <configuration>
-            <implementation>org.mule.tools.cargo.container.configuration.Mule3xLocalConfiguration</implementation>
-          </configuration>
           <deployer>
-            <implementation>org.mule.tools.cargo.deployer.FileDeployer</implementation>
             <type>installed</type>
             <deployables>
               <deployable>
-                <implementation>org.mule.tools.cargo.deployable.MuleApplicationDeployable</implementation>
                 <groupId>org.mule.examples</groupId>
                 <artifactId>mule-example-echo</artifactId>
                 <type>zip</type>
@@ -418,18 +404,12 @@ Introduction
           <wait>false</wait>
           <container>
             <containerId>mule3x</containerId>
-            <implementation>org.mule.tools.cargo.container.Mule3xInstalledLocalContainer</implementation>
             <home>${mule.distribution}/mule-standalone-${muleVersion}</home>
           </container>
-          <configuration>
-            <implementation>org.mule.tools.cargo.container.configuration.Mule3xLocalConfiguration</implementation>
-          </configuration>
           <deployer>
-            <implementation>org.mule.tools.cargo.deployer.FileDeployer</implementation>
             <type>installed</type>
             <deployables>
               <deployable>
-                <implementation>org.mule.tools.cargo.deployable.MuleApplicationDeployable</implementation>
                 <groupId>org.mule.examples</groupId>
                 <artifactId>mule-example-echo</artifactId>
                 <type>zip</type>
@@ -486,14 +466,11 @@ Introduction
           <wait>false</wait>
           <container>
             <containerId>mule3x</containerId>
-            <implementation>org.mule.tools.cargo.container.Mule3xEmbeddedLocalContainer</implementation>
             <type>embedded</type>
           </container>
           <configuration>
-            <implementation>org.mule.tools.cargo.container.configuration.Mule3xLocalConfiguration</implementation>
             <deployables>
               <deployable>
-                <implementation>org.mule.tools.cargo.deployable.MuleApplicationDeployable</implementation>
                 <groupId>org.mule.examples</groupId>
                 <artifactId>mule-example-echo</artifactId>
                 <type>zip</type>
@@ -543,11 +520,9 @@ Introduction
           <wait>false</wait>
           <container>
             <containerId>ion</containerId>
-            <implementation>org.mule.tools.cargo.container.IONContainer</implementation>
             <type>remote</type>
           </container>
           <configuration>
-            <implementation>org.mule.tools.cargo.container.configuration.IONConfiguration</implementation>
             <type>runtime</type>
             <properties>
                 <domain>YOUR_DOMAIN</domain>
@@ -557,11 +532,9 @@ Introduction
             </properties>
           </configuration>
           <deployer>
-            <implementation>org.mule.tools.cargo.deployer.IONDeployer</implementation>
             <type>remote</type>
             <deployables>
               <deployable>
-                <implementation>org.mule.tools.cargo.deployable.MuleApplicationDeployable</implementation>
                 <groupId>org.mule.examples</groupId>
                 <artifactId>mule-example-echo</artifactId>
                 <type>zip</type>

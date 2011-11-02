@@ -1,12 +1,8 @@
 package org.mule.tools.cargo.container.configuration;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.codehaus.cargo.container.LocalContainer;
 import org.codehaus.cargo.container.configuration.ConfigurationCapability;
 import org.codehaus.cargo.container.configuration.ConfigurationType;
-import org.codehaus.cargo.container.spi.configuration.AbstractConfigurationCapability;
 import org.codehaus.cargo.container.spi.configuration.AbstractLocalConfiguration;
 
 /**
@@ -24,12 +20,7 @@ public class Mule3xLocalConfiguration extends AbstractLocalConfiguration {
 
     @Override
     public ConfigurationCapability getCapability() {
-        return new AbstractConfigurationCapability() {
-            @Override
-            protected Map<String, Boolean> getPropertySupportMap() {
-                return new HashMap<String, Boolean>();
-            }
-        };
+        return new MuleConfigurationCapability();
     }
 
     @Override

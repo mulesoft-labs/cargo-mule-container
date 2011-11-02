@@ -131,10 +131,7 @@ public class IONDeployer extends AbstractDeployer {
             case STARTED:
             case UNDEPLOYED:
             case DEPLOY_FAILED:
-                final ClientResponse.Status status = createBuilder(domain+"/deploy").type(MediaType.APPLICATION_OCTET_STREAM_TYPE).post(ClientResponse.class, new File(deployable.getFile())).getClientResponseStatus();
-                if (status != ClientResponse.Status.OK) {
-                    throw new DeployableException("Failed to deploy <"+domain+">: "+status.getStatusCode()+"("+status.getReasonPhrase()+")");
-                }
+                //Update MetaData
                 final int workers = getConfiguration().getWorkers();
                 if (application.getWorkers() == workers) {
                     getLogger().info("Forcing redeployment", IONDeployer.LOG_DEPLOY_CATEGORY);
@@ -142,7 +139,18 @@ public class IONDeployer extends AbstractDeployer {
                     getLogger().info("Scaling workers to <"+workers+">", IONDeployer.LOG_DEPLOY_CATEGORY);
 
                     application.setWorkers(workers);
-                    updateIONApplication(domain, application);
+                }
+
+                if (!getConfiguration().getMuleVersion().equals(application.getMuleVersion())) {
+                    application.setMuleVersion(getConfiguration().getMuleVersion());
+                }
+
+                updateIONApplication(domain, application);
+
+                //Push new app
+                final ClientResponse.Status status = createBuilder(domain+"/deploy").type(MediaType.APPLICATION_OCTET_STREAM_TYPE).post(ClientResponse.class, new File(deployable.getFile())).getClientResponseStatus();
+                if (status != ClientResponse.Status.OK) {
+                    throw new DeployableException("Failed to deploy <"+domain+">: "+status.getStatusCode()+"("+status.getReasonPhrase()+")");
                 }
                 break;
             case DEPLOYING:

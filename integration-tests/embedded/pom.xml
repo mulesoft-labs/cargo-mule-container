@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.mule.tools.cargo</groupId>
         <artifactId>integration-tests</artifactId>
-        <version>0.9.5-SNAPSHOT</version>
+        <version>0.9.8-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -45,13 +45,11 @@
                     <wait>false</wait>
                     <container>
                         <containerId>mule3x</containerId>
-                        <implementation>org.mule.tools.cargo.container.Mule3xEmbeddedLocalContainer</implementation>
+                        <type>embedded</type>
                     </container>
                     <configuration>
-                        <implementation>org.mule.tools.cargo.container.configuration.Mule3xLocalConfiguration</implementation>
                         <deployables>
                             <deployable>
-                                <implementation>org.mule.tools.cargo.deployable.MuleApplicationDeployable</implementation>
                                 <groupId>org.mule.examples</groupId>
                                 <artifactId>mule-example-echo</artifactId>
                                 <type>zip</type>

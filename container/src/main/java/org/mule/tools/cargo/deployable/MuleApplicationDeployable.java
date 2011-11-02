@@ -8,6 +8,8 @@ import org.codehaus.cargo.container.spi.deployable.AbstractDeployable;
  */
 public class MuleApplicationDeployable extends AbstractDeployable  {
 
+    public static final DeployableType TYPE = DeployableType.toType("zip");
+
     public MuleApplicationDeployable(final String file) {
         super(file);
     }
@@ -18,7 +20,7 @@ public class MuleApplicationDeployable extends AbstractDeployable  {
     }
 
     public static DeployableType getDeployableType() {
-        return DeployableType.toType("zip");
+        return MuleApplicationDeployable.TYPE;
     }
 
 }
