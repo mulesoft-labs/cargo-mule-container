@@ -97,7 +97,7 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <phase>site-deploy</phase>
+                        <phase>site</phase>
                         <goals>
                             <goal>site</goal>
                         </goals>
