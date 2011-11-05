@@ -21,6 +21,7 @@ import org.codehaus.cargo.container.deployer.DeployerType;
 import org.codehaus.cargo.container.spi.deployer.AbstractDeployer;
 import org.mule.tools.cargo.container.IONContainer;
 import org.mule.tools.cargo.container.configuration.IONConfiguration;
+import org.mule.tools.cargo.deployable.AbstractMuleDeployable;
 
 /**
  * Deploy {@link MuleApplicationDeployable} to a Mule iON domain using REST API (http://www.mulesoft.org/documentation/display/ION/API).
@@ -144,6 +145,7 @@ public class IONDeployer extends AbstractDeployer {
                 if (!getConfiguration().getMuleVersion().equals(application.getMuleVersion())) {
                     application.setMuleVersion(getConfiguration().getMuleVersion());
                 }
+                application.setFilename(AbstractMuleDeployable.class.cast(deployable).getApplicationName()+".zip");
 
                 updateIONApplication(domain, application);
 

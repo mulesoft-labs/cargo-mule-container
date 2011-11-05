@@ -16,6 +16,7 @@ import org.codehaus.cargo.container.deployable.Deployable;
 import org.codehaus.cargo.container.spi.AbstractEmbeddedLocalContainer;
 import org.mule.MuleServer;
 import org.mule.tools.cargo.deployable.MuleApplicationDeployable;
+import org.mule.tools.cargo.deployable.ZipApplicationDeployable;
 
 /**
  * Start an embedded {@link MuleServer} using maven dependencies.
@@ -86,18 +87,17 @@ public class Mule3xEmbeddedLocalContainer extends AbstractEmbeddedLocalContainer
     @Override
     protected void doStart() throws Exception {
         final Deployable deployable = getDeployable();
-        if (!(deployable instanceof MuleApplicationDeployable)) {
-            throw new IllegalArgumentException("Only supports "+MuleApplicationDeployable.class.getSimpleName());
+        if (!(deployable instanceof MuleApplicationDeployable || deployable instanceof ZipApplicationDeployable)) {
+            throw new IllegalArgumentException("Deployable type <" + deployable.getType() + "> is not supported!");
         }
 
         configureLog4j();
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         try {
-            final MuleApplicationDeployable muleApplicationDeployable = (MuleApplicationDeployable) deployable;
             final URLClassLoader applicationClassLoader = URLClassLoader.newInstance(new URL[]{
-                new File(muleApplicationDeployable.getFile()).toURI().toURL(),
+                new File(deployable.getFile()).toURI().toURL(),
                 //TODO Add support for embedded lib directory
-                new URL("jar:file:"+muleApplicationDeployable.getFile()+"!/classes/")
+                new URL("jar:file:"+deployable.getFile()+"!/classes/")
             }, getClassLoader());
             Thread.currentThread().setContextClassLoader(applicationClassLoader);
 

@@ -10,6 +10,8 @@ import org.codehaus.cargo.container.deployable.Deployable;
 import org.codehaus.cargo.container.deployable.DeployableException;
 import org.codehaus.cargo.container.spi.deployer.AbstractInstalledLocalDeployer;
 import org.mule.module.launcher.DeploymentService;
+import org.mule.tools.cargo.deployable.AbstractMuleDeployable;
+import org.mule.tools.cargo.deployable.ZipApplicationDeployable;
 
 /**
  * Deploy {@link MuleApplicationDeployable} to a {@link Mule3xInstalledLocalContainer} by copying {@link MuleApplicationDeployable#getFile()} to {@link Mule3xInstalledLocalContainer#getHome()}/apps.
@@ -33,7 +35,7 @@ public class FileDeployer extends AbstractInstalledLocalDeployer {
      * @throws DeployableException if provided {@link Deployable} is a {@link MuleApplicationDeployable}
      */
     protected final void ensureMuleApplication(final Deployable deployable) {
-        if (!(deployable instanceof MuleApplicationDeployable)) {
+        if (!(deployable instanceof MuleApplicationDeployable || deployable instanceof ZipApplicationDeployable)) {
             throw new DeployableException("Deployable type <" + deployable.getType() + "> is not supported!");
         }
     }
@@ -54,16 +56,16 @@ public class FileDeployer extends AbstractInstalledLocalDeployer {
      * @param deployable
      * @return anchor file for specified {@link Deployable}
      */
-    protected final File getAnchorFile(final Deployable deployable) {
-        return new File(getAppsFolder(), extractName(deployable)+DeploymentService.APP_ANCHOR_SUFFIX);
+    protected final File getAnchorFile(final AbstractMuleDeployable deployable) {
+        return new File(getAppsFolder(), deployable.getApplicationName()+DeploymentService.APP_ANCHOR_SUFFIX);
     }
 
     /**
      * @param deployable
      * @return application folder for specified {@link Deployable}
      */
-    protected final File getApplicationFolder(final Deployable deployable) {
-        return new File(getAppsFolder(), extractName(deployable));
+    protected final File getApplicationFolder(final AbstractMuleDeployable deployable) {
+        return new File(getAppsFolder(), deployable.getApplicationName());
     }
 
     protected final String normalizeName(final Deployable deployable) {
@@ -73,23 +75,6 @@ public class FileDeployer extends AbstractInstalledLocalDeployer {
         } else {
             return fileName;
         }
-    }
-
-    /**
-     * @param deployable
-     * @return application name from {@link Deployable#getFile()}
-     */
-    protected final String extractName(final Deployable deployable) {
-        final String fileName = normalizeName(deployable);
-        return fileName.substring(fileName.lastIndexOf(File.separator)+1, fileName.length()-4);
-    }
-
-    /**
-     * @param deployable
-     * @return {@link File} pointing to application
-     */
-    protected final File extractSourceFile(final Deployable deployable) {
-        return new File(normalizeName(deployable));
     }
 
     /**
@@ -120,18 +105,19 @@ public class FileDeployer extends AbstractInstalledLocalDeployer {
     public void deploy(final Deployable deployable) {
         ensureMuleApplication(deployable);
 
+        final AbstractMuleDeployable muleDeployable = (AbstractMuleDeployable) deployable;
         final File appsFolder = getAppsFolder();
-        final File sourceFile = extractSourceFile(deployable);
+        final File sourceFile = new File(deployable.getFile());
         final File destinationFile = new File(appsFolder, sourceFile.getName());
 
-        final String applicationName = extractName(deployable);
+        final String applicationName = muleDeployable.getApplicationName();
         getLogger().info("Deploying <"+applicationName+">", "deploy");
         getLogger().info("Copying <"+sourceFile+"> to <"+destinationFile+">", FileDeployer.LOG_DEPLOY_CATEGORY);
 
         try {
             FileUtils.getFileUtils().copyFile(sourceFile, destinationFile);
 
-            final File anchorFile = getAnchorFile(deployable);
+            final File anchorFile = getAnchorFile(muleDeployable);
 
             getLogger().info("Waiting for <"+anchorFile+"> creation", FileDeployer.LOG_DEPLOY_CATEGORY);
 
@@ -147,7 +133,8 @@ public class FileDeployer extends AbstractInstalledLocalDeployer {
     public void undeploy(final Deployable deployable) {
         ensureMuleApplication(deployable);
 
-        final String applicationName = extractName(deployable);
+        final AbstractMuleDeployable muleDeployable = (AbstractMuleDeployable) deployable;
+        final String applicationName = muleDeployable.getApplicationName();
 
         getLogger().info("Undeploying <"+applicationName+">", FileDeployer.LOG_UNDEPLOY_CATEGORY);
 
@@ -158,7 +145,7 @@ public class FileDeployer extends AbstractInstalledLocalDeployer {
             //Continue
         }
 
-        final File anchor = getAnchorFile(deployable);
+        final File anchor = getAnchorFile(muleDeployable);
         if (anchor.exists()) {
             getLogger().info("Deleting <"+anchor+">", FileDeployer.LOG_UNDEPLOY_CATEGORY);
 
@@ -166,7 +153,7 @@ public class FileDeployer extends AbstractInstalledLocalDeployer {
                 throw new DeployableException("Failed to delete <"+anchor+">");
             }
 
-            final File applicationFolder = getApplicationFolder(deployable);
+            final File applicationFolder = getApplicationFolder(muleDeployable);
 
             getLogger().info("Waiting for <"+applicationFolder+"> deletion", FileDeployer.LOG_UNDEPLOY_CATEGORY);
 
