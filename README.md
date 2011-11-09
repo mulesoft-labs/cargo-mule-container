@@ -24,13 +24,12 @@ Update your pom to contain:
 
 ```xml
 ...
-  <repositories>
-    <repository>
-      <id>muleforge-release</id>
-      <name>MuleForge Release Repository</name>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>muleforge.release</id>
       <url>http://repository.mulesoft.org/releases/</url>
-    </repository>
-  </repositories>
+    </pluginRepository>
+  </pluginRepositories>
 ...
 ```
 
