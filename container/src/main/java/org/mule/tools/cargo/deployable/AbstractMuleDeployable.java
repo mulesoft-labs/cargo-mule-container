@@ -14,7 +14,7 @@ public abstract class AbstractMuleDeployable extends AbstractDeployable {
      */
     public final String getApplicationName() {
         final String fileName = getFile();
-        return fileName.substring(fileName.lastIndexOf(File.separator)+1, fileName.length()-getType().getType().length()-1);
+        return fileName.substring(fileName.lastIndexOf(File.separator)+1, fileName.lastIndexOf("."));
     }
 
 }

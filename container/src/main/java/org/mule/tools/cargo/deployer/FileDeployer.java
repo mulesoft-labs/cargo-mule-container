@@ -68,15 +68,6 @@ public class FileDeployer extends AbstractInstalledLocalDeployer {
         return new File(getAppsFolder(), deployable.getApplicationName());
     }
 
-    protected final String normalizeName(final Deployable deployable) {
-        final String fileName = deployable.getFile();
-        if (fileName.endsWith(".mule")) {
-            return fileName.replace(".mule", ".zip");
-        } else {
-            return fileName;
-        }
-    }
-
     /**
      * Wait up to timeout before anchor is discovered (using {@link File#exists()}).
      * @param file

@@ -5,6 +5,8 @@
     <groupId>org.mule.tools.cargo</groupId>
     <artifactId>container</artifactId>
 
+    <name>Container</name>
+
     <parent>
         <groupId>org.mule.tools.cargo</groupId>
         <artifactId>parent</artifactId>
@@ -47,8 +49,12 @@
             <artifactId>jersey-json</artifactId>
             <version>${jerseyVersion}</version>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.9</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
-
-    <name>Container</name>
 
 </project>
