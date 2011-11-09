@@ -35,7 +35,7 @@ public class MuleFactoryRegistry extends AbstractFactoryRegistry
         factory.registerDeployable(Mule3xEmbeddedLocalContainer.ID, MuleApplicationDeployable.TYPE, MuleApplicationDeployable.class);
         factory.registerDeployable(Mule3xEmbeddedLocalContainer.ID, ZipApplicationDeployable.TYPE, ZipApplicationDeployable.class);
         factory.registerDeployable(IONContainer.ID, MuleApplicationDeployable.TYPE, MuleApplicationDeployable.class);
-        factory.registerDeployable(IONContainer.ID, ZipApplicationDeployable.TYPE, MuleApplicationDeployable.class);
+        factory.registerDeployable(IONContainer.ID, ZipApplicationDeployable.TYPE, ZipApplicationDeployable.class);
     }
 
     /**
