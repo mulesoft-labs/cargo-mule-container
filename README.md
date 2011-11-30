@@ -24,13 +24,12 @@ Update your pom to contain:
 
 ```xml
 ...
-  <repositories>
-    <repository>
-      <id>muleforge-release</id>
-      <name>MuleForge Release Repository</name>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>muleforge.release</id>
       <url>http://repository.mulesoft.org/releases/</url>
-    </repository>
-  </repositories>
+    </pluginRepository>
+  </pluginRepositories>
 ...
 ```
 
@@ -55,7 +54,7 @@ Update your pom to list cargo as a dependency:
           <dependency>
             <groupId>org.mule.tools.cargo</groupId>
             <artifactId>container</artifactId>
-            <version>0.9.9</version>
+            <version>0.9.10</version>
           </dependency>
       </plugin>
     </plugins>
