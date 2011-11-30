@@ -11,6 +11,7 @@ import java.util.List;
 public class Application {
 
     public enum Status {
+        WAITING_FOR_SERVER,
         DEPLOYING,
         STARTED,
         UNDEPLOYED,
