@@ -2,6 +2,7 @@ package org.mule.tools.cargo.deployer;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Maps application JSON type.
@@ -71,6 +72,7 @@ public class Application {
     private List<WorkerStatus> workerStatuses;
     private String muleVersion;
     private List<String> supportedVersions;
+    private Map<String, String> properties;
 
     public String getDescription() {
         return this.description;
@@ -166,6 +168,14 @@ public class Application {
 
     public void setSupportedVersions(final List<String> supportedVersions) {
         this.supportedVersions = supportedVersions;
+    }
+
+    public Map<String, String> getProperties() {
+        return this.properties;
+    }
+
+    public void setProperties(final Map<String, String> properties) {
+        this.properties = properties;
     }
 
 }
