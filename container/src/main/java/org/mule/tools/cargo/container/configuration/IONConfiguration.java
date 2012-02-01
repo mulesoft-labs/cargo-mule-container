@@ -1,6 +1,5 @@
 package org.mule.tools.cargo.container.configuration;
 
-
 import org.codehaus.cargo.container.configuration.ConfigurationCapability;
 import org.codehaus.cargo.container.spi.configuration.AbstractRuntimeConfiguration;
 
