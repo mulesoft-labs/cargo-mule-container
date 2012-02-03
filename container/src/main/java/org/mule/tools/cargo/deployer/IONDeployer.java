@@ -117,10 +117,6 @@ public class IONDeployer extends AbstractDeployer {
         }
     }
 
-    protected void sleep() {
-
-    }
-
     @Override
     public void deploy(final Deployable deployable) {
         final String domain = getConfiguration().getDomain();
