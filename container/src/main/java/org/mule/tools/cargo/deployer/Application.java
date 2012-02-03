@@ -14,6 +14,7 @@ public class Application {
     public enum Status {
         WAITING_FOR_SERVER,
         DEPLOYING,
+        UNDEPLOYING,
         STARTED,
         UNDEPLOYED,
         DEPLOY_FAILED
