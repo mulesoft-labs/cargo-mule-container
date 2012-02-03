@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mule.tools.cargo</groupId>
     <artifactId>parent</artifactId>
-    <version>0.9.12</version>
+    <version>0.9.13-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Cargo container for Mule</name>
