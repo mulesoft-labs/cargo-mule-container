@@ -29,10 +29,8 @@ import org.mule.tools.cargo.deployable.AbstractMuleDeployable;
  */
 public class IONDeployer extends AbstractDeployer {
 
-    private static final String DEFAULT_ION_URL = "https://muleion.com/";
     private final IONContainer container;
     private final Client client;
-    private long maxWaitTime = IONDeployer.DEFAULT_MAX_WAIT_TIME;
     private static final long DEFAULT_MAX_WAIT_TIME = 120000L;
     private static final String LOG_DEPLOY_CATEGORY = "ion:deploy";
     private static final String LOG_UNDEPLOY_CATEGORY = "ion:undeploy";
@@ -46,7 +44,6 @@ public class IONDeployer extends AbstractDeployer {
 
         this.container = (IONContainer) container;
         //Ensure we have all required parameters
-        this.container.getConfiguration().validate();
         final ClientConfig clientConfig = new DefaultClientConfig();
         clientConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
         this.client = Client.create(clientConfig);
@@ -57,16 +54,8 @@ public class IONDeployer extends AbstractDeployer {
         return DeployerType.REMOTE;
     }
 
-    protected final String getIONURL() {
-        final String ionURL = getConfiguration().getIONURL();
-        if (ionURL == null) {
-            return IONDeployer.DEFAULT_ION_URL;
-        }
-        return ionURL;
-    }
-
     protected final String getIONApplicationsResource() {
-        return getIONURL()+"api/applications/";
+        return getConfiguration().getIONURL()+"api/applications/";
     }
 
     protected final WebResource.Builder createBuilder(final String path) {
@@ -160,8 +149,9 @@ public class IONDeployer extends AbstractDeployer {
 
         getLogger().info("Waiting for deployment", IONDeployer.LOG_DEPLOY_CATEGORY);
 
+        final long maxWaitTime = getConfiguration().getMaxWaitTime();
         final long before = System.currentTimeMillis();
-        while (System.currentTimeMillis() - before < this.maxWaitTime) {
+        while (System.currentTimeMillis() - before < maxWaitTime) {
             switch (getIONApplication(domain).getStatus()) {
                 case DEPLOY_FAILED:
                     throw new DeployableException("Failed to deploy <"+deployable.getFile()+"> on <"+getConfiguration().getDomain()+">");
@@ -176,7 +166,7 @@ public class IONDeployer extends AbstractDeployer {
                 break;
             }
         }
-        throw new DeployableException("Waited on <"+getConfiguration().getDomain()+"> deployment for <"+this.maxWaitTime+"> ms");
+        throw new DeployableException("Waited on <"+getConfiguration().getDomain()+"> deployment for <"+maxWaitTime+"> ms");
     }
 
     @Override
@@ -193,8 +183,9 @@ public class IONDeployer extends AbstractDeployer {
 
         getLogger().info("Waiting for undeployment", IONDeployer.LOG_UNDEPLOY_CATEGORY);
 
+        final long maxWaitTime = getConfiguration().getMaxWaitTime();
         final long before = System.currentTimeMillis();
-        while (System.currentTimeMillis() - before < this.maxWaitTime) {
+        while (System.currentTimeMillis() - before < maxWaitTime) {
             if (getIONApplication(domain).getWorkerStatuses().isEmpty()) {
                 getLogger().info("Undeployed in <"+(System.currentTimeMillis()-before)+"> ms", IONDeployer.LOG_UNDEPLOY_CATEGORY);
 
@@ -208,7 +199,7 @@ public class IONDeployer extends AbstractDeployer {
                 break;
             }
         }
-        throw new DeployableException("Waited on <"+getConfiguration().getDomain()+"> undeployment for <"+this.maxWaitTime+"> ms");
+        throw new DeployableException("Waited on <"+getConfiguration().getDomain()+"> undeployment for <"+maxWaitTime+"> ms");
     }
 
 }
