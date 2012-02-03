@@ -40,8 +40,8 @@ Update your pom to list cargo as a dependency:
 ```xml
 ...
   <properties>
-    <cargoVersion>1.1.3</cargoVersion>
-    <muleVersion>3.2.0</muleVersion>
+    <cargoVersion>1.2.0</cargoVersion>
+    <muleVersion>3.2.1</muleVersion>
   </properties>
 
   <build>
@@ -54,7 +54,7 @@ Update your pom to list cargo as a dependency:
           <dependency>
             <groupId>org.mule.tools.cargo</groupId>
             <artifactId>container</artifactId>
-            <version>0.9.10</version>
+            <version>0.9.12</version>
           </dependency>
       </plugin>
     </plugins>
