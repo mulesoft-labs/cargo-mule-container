@@ -73,6 +73,8 @@ public class Application {
     private String muleVersion;
     private List<String> supportedVersions;
     private Map<String, String> properties;
+    private String href;
+    private String deploymentUpdateStatus;
 
     public String getDescription() {
         return this.description;
@@ -176,6 +178,22 @@ public class Application {
 
     public void setProperties(final Map<String, String> properties) {
         this.properties = properties;
+    }
+
+    public String getHref() {
+        return this.href;
+    }
+
+    public void setHref(final String href) {
+        this.href = href;
+    }
+
+    public String getDeploymentUpdateStatus() {
+        return this.deploymentUpdateStatus;
+    }
+
+    public void setDeploymentUpdateStatus(final String deploymentUpdateStatus) {
+        this.deploymentUpdateStatus = deploymentUpdateStatus;
     }
 
 }
