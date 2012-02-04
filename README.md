@@ -1,8 +1,8 @@
-This project is a Cargo container implementation for Mule. It provides abstration to deploy Mule applications to embedded and installed servers.
-
 # Introduction
 
 This project provides a [Cargo](http://cargo.codehaus.org/) implementation for [Mule](http://www.mulesoft.org) container.
+It provides abstration to deploy Mule applications to embedded and installed Mule servers as well as [iON](http://muleion.com) platform.
+
 Documentation will focus on [Maven](http://maven.apache.org/) integration. Find more details on other integration on [Cargo](http://cargo.codehaus.org/) website.
 
 ## Configuration
@@ -299,6 +299,8 @@ Bellow are sample configurations detailing how to deploy echo example on all 3 c
 
 ## Deploy echo example in an installed mule instance (mule installation required)
 
+You can find a complete sample [here](https://github.com/mulesoft/cargo-mule-container/tree/master/integration-tests/installed).
+
 Allows to start a container using a local Mule installation.
 This container implementation does not support deployable and file deployer implementation can be used.
 
@@ -349,7 +351,7 @@ Example using a mule application:
 ...
 ```
 
-Or using the regular mule-standalone distribution as dependency:
+Or using the regular mule-standalone distribution as dependency (no need for local mule installation):
 
 ```xml
 ...
@@ -417,6 +419,8 @@ Or using the regular mule-standalone distribution as dependency:
 
 ## Deploy echo example in an embedded Container (no mule installation required)
 
+You can find a complete sample [here](https://github.com/mulesoft/cargo-mule-container/tree/master/integration-tests/embedded).
+
 Allows to start a MuleServer using classpath from provided dependencies.
 This container implementation supports a single deployable and no deployer implementation can be used.
 
@@ -473,6 +477,8 @@ Example using a mule application:
 ```
 
 ## Deploy echo example on Mule iON
+
+You can find a complete sample [here](https://github.com/mulesoft/cargo-mule-container/tree/master/integration-tests/ion).
 
 Allows to connect to your iON domain.
 This container implementation does not support deployable and only iON deployer implementation can be used.
