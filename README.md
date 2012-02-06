@@ -1,7 +1,7 @@
 # Introduction
 
 This project provides a [Cargo](http://cargo.codehaus.org/) implementation for [Mule](http://www.mulesoft.org) container.
-It provides abstration to deploy Mule applications to embedded and installed Mule servers as well as [iON](http://muleion.com) platform.
+It provides abstration to deploy Mule applications to embedded and installed Mule servers.
 
 Documentation will focus on [Maven](http://maven.apache.org/) integration. Find more details on other integration on [Cargo](http://cargo.codehaus.org/) website.
 
@@ -54,7 +54,7 @@ Update your pom to list cargo as a dependency:
           <dependency>
             <groupId>org.mule.tools.cargo</groupId>
             <artifactId>container</artifactId>
-            <version>0.9.12</version>
+            <version>${muleVersion}</version>
           </dependency>
       </plugin>
     </plugins>
@@ -474,67 +474,4 @@ Example using a mule application:
     </plugins>
   </build>
   ...
-```
-
-## Deploy echo example on Mule iON
-
-You can find a complete sample [here](https://github.com/mulesoft/cargo-mule-container/tree/master/integration-tests/ion).
-
-Allows to connect to your iON domain.
-This container implementation does not support deployable and only iON deployer implementation can be used.
-
-When using this container you will need to provide:
-* your iON domain/credential details
-
-This container is implemented by org.mule.tools.cargo.container.IONContainer class and must be used with associated:
-* remote configuration (org.mule.tools.cargo.container.configuration.IONConfiguration)
-* deployable type (org.mule.tools.cargo.deployable.MuleApplicationDeployable)
-
-Example using a mule application:
-
-```xml
-...
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.cargo</groupId>
-        <artifactId>cargo-maven2-plugin</artifactId>
-        <version>${cargoVersion}</version>
-        <dependencies>
-          <dependency>
-            <groupId>org.mule.tools.cargo</groupId>
-            <artifactId>container</artifactId>
-            <version>${project.version}</version>
-          </dependency>
-        </dependencies>
-        <configuration>
-          <wait>false</wait>
-          <container>
-            <containerId>ion</containerId>
-            <type>remote</type>
-          </container>
-          <configuration>
-            <type>runtime</type>
-            <properties>
-                <domain>YOUR_DOMAIN</domain>
-                <username>YOUR_USERNAME</username>
-                <password>YOUR_PASSWORD</password>
-                <workers>1</workers>
-            </properties>
-          </configuration>
-          <deployer>
-            <type>remote</type>
-            <deployables>
-              <deployable>
-                <groupId>org.mule.examples</groupId>
-                <artifactId>mule-example-echo</artifactId>
-                <type>zip</type>
-              </deployable>
-            </deployables>
-          </deployer>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-...
 ```
