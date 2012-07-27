@@ -11,13 +11,11 @@ import org.codehaus.cargo.generic.configuration.ConfigurationFactory;
 import org.codehaus.cargo.generic.deployable.DeployableFactory;
 import org.codehaus.cargo.generic.deployer.DeployerFactory;
 import org.codehaus.cargo.generic.packager.PackagerFactory;
-import org.mule.tools.cargo.container.configuration.IONConfiguration;
 import org.mule.tools.cargo.container.configuration.Mule3xLocalConfiguration;
 import org.mule.tools.cargo.container.configuration.MuleConfigurationCapability;
 import org.mule.tools.cargo.deployable.MuleApplicationDeployable;
 import org.mule.tools.cargo.deployable.ZipApplicationDeployable;
 import org.mule.tools.cargo.deployer.FileDeployer;
-import org.mule.tools.cargo.deployer.IONDeployer;
 
 /**
  * Registers Mule support into default factories.
@@ -34,8 +32,6 @@ public class MuleFactoryRegistry extends AbstractFactoryRegistry
     protected void register(final DeployableFactory factory) {
         factory.registerDeployable(Mule3xEmbeddedLocalContainer.ID, MuleApplicationDeployable.TYPE, MuleApplicationDeployable.class);
         factory.registerDeployable(Mule3xEmbeddedLocalContainer.ID, ZipApplicationDeployable.TYPE, ZipApplicationDeployable.class);
-        factory.registerDeployable(IONContainer.ID, MuleApplicationDeployable.TYPE, MuleApplicationDeployable.class);
-        factory.registerDeployable(IONContainer.ID, ZipApplicationDeployable.TYPE, ZipApplicationDeployable.class);
     }
 
     /**
@@ -47,7 +43,6 @@ public class MuleFactoryRegistry extends AbstractFactoryRegistry
     protected void register(final ConfigurationCapabilityFactory factory) {
         factory.registerConfigurationCapability(Mule3xEmbeddedLocalContainer.ID, ContainerType.EMBEDDED, ConfigurationType.STANDALONE, MuleConfigurationCapability.class);
         factory.registerConfigurationCapability(Mule3xInstalledLocalContainer.ID, ContainerType.INSTALLED, ConfigurationType.STANDALONE, MuleConfigurationCapability.class);
-        factory.registerConfigurationCapability(IONContainer.ID, ContainerType.REMOTE, ConfigurationType.RUNTIME, MuleConfigurationCapability.class);
     }
 
     /**
@@ -59,7 +54,6 @@ public class MuleFactoryRegistry extends AbstractFactoryRegistry
     protected void register(final ConfigurationFactory factory) {
         factory.registerConfiguration(Mule3xEmbeddedLocalContainer.ID, ContainerType.EMBEDDED, ConfigurationType.STANDALONE, Mule3xLocalConfiguration.class);
         factory.registerConfiguration(Mule3xInstalledLocalContainer.ID, ContainerType.INSTALLED, ConfigurationType.STANDALONE, Mule3xLocalConfiguration.class);
-        factory.registerConfiguration(IONContainer.ID, ContainerType.REMOTE, ConfigurationType.RUNTIME, IONConfiguration.class);
     }
 
     /**
@@ -70,7 +64,6 @@ public class MuleFactoryRegistry extends AbstractFactoryRegistry
     @Override
     protected void register(final DeployerFactory factory) {
         factory.registerDeployer(Mule3xInstalledLocalContainer.ID, DeployerType.INSTALLED, FileDeployer.class);
-        factory.registerDeployer(IONContainer.ID, DeployerType.REMOTE, IONDeployer.class);
     }
 
     /**
@@ -91,7 +84,6 @@ public class MuleFactoryRegistry extends AbstractFactoryRegistry
     protected void register(final ContainerFactory factory) {
         factory.registerContainer(Mule3xEmbeddedLocalContainer.ID, ContainerType.EMBEDDED, Mule3xEmbeddedLocalContainer.class);
         factory.registerContainer(Mule3xInstalledLocalContainer.ID, ContainerType.INSTALLED, Mule3xInstalledLocalContainer.class);
-        factory.registerContainer(IONContainer.ID, ContainerType.REMOTE, IONContainer.class);
     }
 
     /**
@@ -102,7 +94,6 @@ public class MuleFactoryRegistry extends AbstractFactoryRegistry
     @Override
     protected void register(final ContainerCapabilityFactory factory) {
         factory.registerContainerCapability(Mule3xEmbeddedLocalContainer.ID, MuleContainerCapability.class);
-        factory.registerContainerCapability(IONContainer.ID, MuleContainerCapability.class);
     }
 
 }

@@ -9,14 +9,13 @@
     <parent>
         <groupId>org.mule.tools.cargo</groupId>
         <artifactId>parent</artifactId>
-        <version>0.9.12-SNAPSHOT</version>
+        <version>3.2.2-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modules>
         <module>embedded</module>
         <module>installed</module>
-        <module>ion</module>
     </modules>
 
     <dependencies>
