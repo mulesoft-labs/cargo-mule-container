@@ -55,7 +55,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin-->
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.cargo</groupId>
                 <artifactId>cargo-maven2-plugin</artifactId>
@@ -83,11 +83,6 @@
                             <type>zip</type>
                         </deployable>
                     </deployables>
-                    <!--configuration>
-                        <properties>
-                            <cargo.system-properties>mule.mmc.bind.port=8888</cargo.system-properties>
-                        </properties>
-                    </configuration-->
                 </configuration>
                 <executions>
                     <execution>
