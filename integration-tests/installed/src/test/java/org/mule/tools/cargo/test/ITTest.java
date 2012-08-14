@@ -14,7 +14,7 @@ public class ITTest {
 
    @Test
    public void test() throws MalformedURLException, IOException {
-       final URL url = new URL("http://localhost:65082/services/EchoUMO/echo/text/hello");
+       final URL url = new URL("http://localhost:8084/echo");
        final URLConnection connection = url.openConnection();
        connection.connect();
        final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
