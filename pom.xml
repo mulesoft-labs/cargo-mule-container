@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mule.tools.cargo</groupId>
     <artifactId>parent</artifactId>
-    <version>3.2.2-SNAPSHOT</version>
+    <version>3.3.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Cargo container for Mule</name>
@@ -26,8 +26,8 @@
     </profiles>
 
     <properties>
-        <cargoVersion>1.2.0</cargoVersion>
-        <muleVersion>3.2.1</muleVersion>
+        <cargoVersion>1.2.3</cargoVersion>
+        <muleVersion>3.3.0</muleVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 

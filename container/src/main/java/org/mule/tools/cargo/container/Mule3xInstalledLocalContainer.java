@@ -81,6 +81,16 @@ public class Mule3xInstalledLocalContainer extends AbstractInstalledLocalContain
         final String home = getHome();
         ensureValidMuleHome(home);
 
+        final String properties = getConfiguration().getPropertyValue("cargo.system-properties");
+        if (properties != null) {
+          for (final String property : properties.split(";")) {
+              final String[] propertyArray = property.split("=");
+              final String key = propertyArray[0].trim();
+              final String value = propertyArray[1].trim();
+              System.setProperty(key, value);
+              getLogger().info("Set property <"+key+"> to value <"+value+">", Mule3xInstalledLocalContainer.LOG_CATEGORY);
+          }
+        }
         getLogger().info("Using mule installation <"+home+">", Mule3xInstalledLocalContainer.LOG_CATEGORY);
 
         System.setProperty(Mule3xInstalledLocalContainer.MULE_HOME, home);
@@ -108,7 +118,7 @@ public class Mule3xInstalledLocalContainer extends AbstractInstalledLocalContain
         //Ugly hack to prevent MuleContainer#shutdown to call System#exit()
         final SecurityManager securityManager = System.getSecurityManager();
         try {
-            final RuntimeException exception = new RuntimeException();
+            final SecurityException exception = new SecurityException();
             System.setSecurityManager(new SecurityManager() {
                 @Override
                 public void checkPermission(final Permission permission) {
@@ -122,6 +132,7 @@ public class Mule3xInstalledLocalContainer extends AbstractInstalledLocalContain
                 final Method shutdownMethod = this.container.getClass().getMethod("shutdown");
                 shutdownMethod.invoke(this.container);
             } catch (InvocationTargetException e) {
+                //Do not propagate our own exception.
                 if (e.getCause() != exception) {
                     throw e;
                 }
