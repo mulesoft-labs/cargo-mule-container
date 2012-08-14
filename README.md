@@ -12,11 +12,11 @@ To use cargo-mule-container you will need to:
 1. define mulesoft.org release repository
 2. add cargo as a dependency to your project
 3. add cargo-mule-container as a dependency to cargo
-4. define specific container you want to use
+4. define your mule standalone installation path
 5. define applications you want to deploy
-6. bind cargo start/stop goals to a Maven phase to start/stop a mule instance (optional)
+6. bind cargo start/stop goals to a Maven phase to start/stop a mule instance ``(optional)``
 7. bind cargo deploy/undeploy goals to a Maven phase to deploy/undeploy your applications
-8. use maven-failsafe plugin to run tests on your deployed applications (optional)
+8. use maven-failsafe plugin to run tests on your deployed applications ``(optional)``
 
 ## Define mulesoft.org release repository
 
