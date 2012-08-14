@@ -1,7 +1,7 @@
 # Introduction
 
 This project provides a [Cargo](http://cargo.codehaus.org/) implementation for [Mule](http://www.mulesoft.org) container.
-It provides abstration to deploy Mule applications to embedded and installed Mule servers.
+It provides abstration to deploy Mule applications to installed Mule servers.
 
 Documentation will focus on [Maven](http://maven.apache.org/) integration. Find more details on other integration on [Cargo](http://cargo.codehaus.org/) website.
 
@@ -40,8 +40,8 @@ Update your pom to list cargo as a dependency:
 ```xml
 ...
   <properties>
-    <cargoVersion>1.2.0</cargoVersion>
-    <muleVersion>3.2.1</muleVersion>
+    <cargoVersion>1.2.3</cargoVersion>
+    <muleVersion>3.3.0</muleVersion>
   </properties>
 
   <build>
@@ -295,7 +295,7 @@ If you follow all those steps then running `mvn post-integration-test` you will 
 
 # Use cases
 
-Bellow are sample configurations detailing how to deploy echo example on all 3 containers.
+Bellow are sample configurations detailing how to deploy echo example on a mule standalone.
 
 ## Deploy echo example in an installed mule instance (mule installation required)
 
@@ -336,14 +336,14 @@ Example using a mule application:
           </container>
           <deployer>
             <type>installed</type>
-            <deployables>
-              <deployable>
-                <groupId>org.mule.examples</groupId>
-                <artifactId>mule-example-echo</artifactId>
-                <type>zip</type>
-              </deployable>
-            </deployables>
           </deployer>
+          <deployables>
+            <deployable>
+              <groupId>org.mule.examples</groupId>
+              <artifactId>mule-example-echo</artifactId>
+              <type>zip</type>
+            </deployable>
+          </deployables>
         </configuration>
       </plugin>
     </plugins>
@@ -402,14 +402,14 @@ Or using the regular mule-standalone distribution as dependency (no need for loc
           </container>
           <deployer>
             <type>installed</type>
-            <deployables>
-              <deployable>
-                <groupId>org.mule.examples</groupId>
-                <artifactId>mule-example-echo</artifactId>
-                <type>zip</type>
-              </deployable>
-            </deployables>
           </deployer>
+          <deployables>
+            <deployable>
+              <groupId>org.mule.examples</groupId>
+              <artifactId>mule-example-echo</artifactId>
+              <type>zip</type>
+            </deployable>
+          </deployables>
         </configuration>
       </plugin>
     </plugins>
@@ -417,22 +417,7 @@ Or using the regular mule-standalone distribution as dependency (no need for loc
 ...
 ```
 
-## Deploy echo example in an embedded Container (no mule installation required)
-
-You can find a complete sample [here](https://github.com/mulesoft/cargo-mule-container/tree/master/integration-tests/embedded).
-
-Allows to start a MuleServer using classpath from provided dependencies.
-This container implementation supports a single deployable and no deployer implementation can be used.
-
-When using this container you will need to provide:
-* mule dependency definitions
-* your application dependencies (if deploying an application)
-
-This container is implemented by org.mule.tools.cargo.container.Mule3xEmbeddedLocalContainer class and must be used with associated:
-* local configuration (org.mule.tools.cargo.container.configuration.Mule3xLocalConfiguration)
-* deployable type (either org.mule.tools.cargo.deployable.MuleApplicationDeployable or org.mule.tools.cargo.deployable.MuleConfigurationDeployable)
-
-Example using a mule application:
+## Specify Java system proerties
 
 ```xml
 ...
@@ -448,30 +433,31 @@ Example using a mule application:
             <artifactId>container</artifactId>
             <version>${project.version}</version>
           </dependency>
-          <dependency>
-            <groupId>org.mule.modules</groupId>
-            <artifactId>mule-module-cxf</artifactId>
-            <version>${muleVersion}</version>
-          </dependency>
         </dependencies>
         <configuration>
           <wait>false</wait>
           <container>
             <containerId>mule3x</containerId>
-            <type>embedded</type>
+            <home>/path/to/your/mule/home</home>
           </container>
+          <deployer>
+            <type>installed</type>
+          </deployer>
+          <deployables>
+            <deployable>
+              <groupId>org.mule.examples</groupId>
+              <artifactId>mule-example-echo</artifactId>
+              <type>zip</type>
+            </deployable>
+          </deployables>
           <configuration>
-            <deployables>
-              <deployable>
-                <groupId>org.mule.examples</groupId>
-                <artifactId>mule-example-echo</artifactId>
-                <type>zip</type>
-              </deployable>
-            </deployables>
+              <properties>
+                  <cargo.system-properties>mule.mmc.bind.port=8888</cargo.system-properties>
+              </properties>
           </configuration>
         </configuration>
       </plugin>
     </plugins>
   </build>
-  ...
+...
 ```
