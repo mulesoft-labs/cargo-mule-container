@@ -9,12 +9,14 @@ import java.security.Permission;
 
 import org.codehaus.cargo.container.ContainerCapability;
 import org.codehaus.cargo.container.configuration.LocalConfiguration;
+import org.codehaus.cargo.container.deployable.Deployable;
 import org.codehaus.cargo.container.spi.AbstractInstalledLocalContainer;
 import org.codehaus.cargo.container.spi.jvm.JvmLauncher;
 import org.mule.module.launcher.MuleContainer;
 import org.mule.module.reboot.DefaultMuleClassPathConfig;
 import org.mule.module.reboot.MuleContainerBootstrap;
 import org.mule.module.reboot.MuleContainerSystemClassLoader;
+import org.mule.tools.cargo.deployer.FileDeployer;
 
 /**
  * Start an embedded {@link MuleServer} using maven dependencies.
@@ -81,6 +83,8 @@ public class Mule3xInstalledLocalContainer extends AbstractInstalledLocalContain
         final String home = getHome();
         ensureValidMuleHome(home);
 
+        // TODO: Fork JVM for container
+        // TODO: Use JvmLauncher to invoke directly mule.bat or mule.sh depending on OS
         final String properties = getConfiguration().getPropertyValue("cargo.system-properties");
         if (properties != null) {
           for (final String property : properties.split(";")) {
@@ -100,10 +104,16 @@ public class Mule3xInstalledLocalContainer extends AbstractInstalledLocalContain
         Thread.currentThread().setContextClassLoader(muleClassLoader);
         try {
             final Class<?> muleClass = Thread.currentThread().getContextClassLoader().loadClass(Mule3xInstalledLocalContainer.MULE_CONTAINER_CLASSNAME);
-            final Constructor<?> c = muleClass.getConstructor();
-            this.container = c.newInstance(new Object[] {});
+            final Constructor<?> c = muleClass.getConstructor(new Class[] {String[].class});
+            this.container = c.newInstance((Object[])(new String[0]));
             final Method startMethod = muleClass.getMethod("start", boolean.class);
             startMethod.invoke(this.container, false);
+
+            // TODO: Take into account poms with deployer config. This should work for modern deployables configuration.
+            /* for (Deployable deployable : getConfiguration().getDeployables()) {
+            	new FileDeployer(this).deploy(deployable);
+						} */
+
         } finally {
             Thread.currentThread().setContextClassLoader(classLoader);
         }
