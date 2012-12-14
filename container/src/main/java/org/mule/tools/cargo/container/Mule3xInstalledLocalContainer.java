@@ -83,8 +83,8 @@ public class Mule3xInstalledLocalContainer extends AbstractInstalledLocalContain
         final String home = getHome();
         ensureValidMuleHome(home);
 
-        // TODO: Fork JVM for container
-        // TODO: Use JvmLauncher to invoke directly mule.bat or mule.sh depending on OS
+        // TODO: Fork JVM for Mule container.
+        // TODO: Use JvmLauncher to invoke directly mule.bat or mule.sh depending on OS. Take a look at the way it is done using Tomcat.
         final String properties = getConfiguration().getPropertyValue("cargo.system-properties");
         if (properties != null) {
           for (final String property : properties.split(";")) {
@@ -105,17 +105,16 @@ public class Mule3xInstalledLocalContainer extends AbstractInstalledLocalContain
         try {
             final Class<?> muleClass = Thread.currentThread().getContextClassLoader().loadClass(Mule3xInstalledLocalContainer.MULE_CONTAINER_CLASSNAME);
             final Constructor<?> c = muleClass.getConstructor(String[].class);
-            final Object[] objs = {new String()};
-            final Object[] passed = {objs};
             this.container = c.newInstance(new Object[] {new String[0]});
             final Method startMethod = muleClass.getMethod("start", boolean.class);
             startMethod.invoke(this.container, false);
 
-            // TODO: Take into account poms with deployer config. This should work for modern deployables configuration.
-            /* for (Deployable deployable : getConfiguration().getDeployables()) {
-            	new FileDeployer(this).deploy(deployable);
-						} */
-
+            // TODO: deployer -> deployables is a deprecated config. The following line should work for modern deployables configuration (but do not forget older ones using deployer).
+            /* 
+             * for (Deployable deployable : getConfiguration().getDeployables()) {
+             *   new FileDeployer(this).deploy(deployable);
+						 * } 
+						 */
         } finally {
             Thread.currentThread().setContextClassLoader(classLoader);
         }
@@ -153,5 +152,4 @@ public class Mule3xInstalledLocalContainer extends AbstractInstalledLocalContain
             System.setSecurityManager(securityManager);
         }
     }
-
 }
