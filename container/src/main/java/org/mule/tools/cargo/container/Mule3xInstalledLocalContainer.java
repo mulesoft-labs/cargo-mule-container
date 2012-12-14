@@ -9,14 +9,14 @@ import java.security.Permission;
 
 import org.codehaus.cargo.container.ContainerCapability;
 import org.codehaus.cargo.container.configuration.LocalConfiguration;
-import org.codehaus.cargo.container.deployable.Deployable;
 import org.codehaus.cargo.container.spi.AbstractInstalledLocalContainer;
 import org.codehaus.cargo.container.spi.jvm.JvmLauncher;
+import org.mule.MuleServer;
 import org.mule.module.launcher.MuleContainer;
 import org.mule.module.reboot.DefaultMuleClassPathConfig;
 import org.mule.module.reboot.MuleContainerBootstrap;
 import org.mule.module.reboot.MuleContainerSystemClassLoader;
-import org.mule.tools.cargo.deployer.FileDeployer;
+import org.mule.tools.cargo.deployable.MuleApplicationDeployable;
 
 /**
  * Start an embedded {@link MuleServer} using maven dependencies.
@@ -104,8 +104,10 @@ public class Mule3xInstalledLocalContainer extends AbstractInstalledLocalContain
         Thread.currentThread().setContextClassLoader(muleClassLoader);
         try {
             final Class<?> muleClass = Thread.currentThread().getContextClassLoader().loadClass(Mule3xInstalledLocalContainer.MULE_CONTAINER_CLASSNAME);
-            final Constructor<?> c = muleClass.getConstructor(new Class[] {String[].class});
-            this.container = c.newInstance((Object[])(new String[0]));
+            final Constructor<?> c = muleClass.getConstructor(String[].class);
+            final Object[] objs = {new String()};
+            final Object[] passed = {objs};
+            this.container = c.newInstance(new Object[] {new String[0]});
             final Method startMethod = muleClass.getMethod("start", boolean.class);
             startMethod.invoke(this.container, false);
 
