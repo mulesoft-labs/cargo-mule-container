@@ -1,2 +1,5 @@
 target/
 /.mule/
+.classpath
+.project
+.settings/
