@@ -9,7 +9,7 @@
     <parent>
         <groupId>org.mule.tools.cargo</groupId>
         <artifactId>parent</artifactId>
-        <version>3.4-M4-SNAPSHOT</version>
+        <version>3.4-M3-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
