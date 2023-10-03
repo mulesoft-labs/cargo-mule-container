@@ -26,8 +26,8 @@
     </profiles>
 
     <properties>
-        <cargoVersion>1.2.3</cargoVersion>
-        <muleVersion>3.3.0</muleVersion>
+        <cargoVersion>1.6.0</cargoVersion>
+        <muleVersion>3.6.0</muleVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
